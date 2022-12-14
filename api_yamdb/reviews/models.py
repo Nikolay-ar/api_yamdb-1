@@ -1,5 +1,7 @@
 from django.db import models
 
+from api_yamdb.users.models import User
+
 
 class Categories(models.Model):
     name = models.TextField()
@@ -31,7 +33,7 @@ class Titles(models.Model):
     year = models.IntegerField('Год выпуска')
     description = models.TextField()
     rating = models.IntegerField('Рейтинг', default=None)
-    сategory = models.ForeignKey(
+    category = models.ForeignKey(
         Categories, on_delete=models.SET_NULL,
         related_name='title',
     )

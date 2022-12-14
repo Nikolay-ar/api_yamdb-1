@@ -4,14 +4,17 @@ from rest_framework import mixins
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 
-# from api.permissions import IsOwnerOrReadOnly
+from .permissions import IsAdminOrReadOnly
+from .serializers import CategoriesSerializer
+
 
 from ..reviews.models import Categories, Titles, Genres
 
 
-class CategoriesViewSet(viewsets.ReadOnlyModelViewSet):
+class CategoriesViewSet(viewsets.ModelViewSet):
     queryset = Categories.objects.all()
-    # serializer_class = CategoriesSerializer
+    serializer_class = CategoriesSerializer
+    permission_classes = (IsAdminOrReadOnly,)
 
 
 class TitlesViewSet(viewsets.ModelViewSet):
