@@ -1,7 +1,7 @@
 from django.db import models
-
-from users.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
+
+from api_yamdb.users.models import User
 
 
 class Categories(models.Model):
@@ -34,7 +34,7 @@ class Titles(models.Model):
     year = models.IntegerField('Год выпуска')
     description = models.TextField()
     rating = models.IntegerField('Рейтинг', default=None)
-    сategory = models.ForeignKey(
+    category = models.ForeignKey(
         Categories, on_delete=models.SET_NULL,
         related_name='title',
     )
