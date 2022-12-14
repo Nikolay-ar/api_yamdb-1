@@ -51,3 +51,25 @@ class GenresTitles(models.Model):
 
     def __str__(self):
         return f'{self.title} {self.genre}'
+
+
+class Review(models.Model):
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='comments')
+    titles = models.ForeignKey(
+        Title, on_delete=models.CASCADE, related_name='comments')
+    text = models.TextField()
+    rating = models.IntegerField()
+    created = models.DateTimeField(
+        'Дата добавления', auto_now_add=True, db_index=True)
+        
+
+class Comment(models.Model):
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='comments')
+    review = models.ForeignKey(
+        Review, on_delete=models.CASCADE, related_name='comments')
+    text = models.TextField()
+    created = models.DateTimeField(
+        'Дата добавления', auto_now_add=True, db_index=True)
+
