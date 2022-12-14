@@ -59,7 +59,7 @@ class Review(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='comments')
     titles = models.ForeignKey(
-        Title, on_delete=models.CASCADE, related_name='comments')
+        Titles, on_delete=models.CASCADE, related_name='comments')
     text = models.TextField()
     rating = models.IntegerField()
     created = models.DateTimeField(
