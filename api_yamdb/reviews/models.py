@@ -1,5 +1,8 @@
 from django.db import models
 
+from users.models import User
+from django.core.validators import MaxValueValidator, MinValueValidator
+
 
 class Categories(models.Model):
     name = models.TextField()
@@ -55,11 +58,15 @@ class GenresTitles(models.Model):
 
 class Review(models.Model):
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='comments')
+        User, on_delete=models.CASCADE, related_name='reviews')
     titles = models.ForeignKey(
-        Title, on_delete=models.CASCADE, related_name='comments')
+        Titles, on_delete=models.CASCADE, related_name='reviews')
     text = models.TextField()
-    rating = models.IntegerField()
+    score = models.IntegerField(default=1,
+        validators=[
+            MaxValueValidator(10),
+            MinValueValidator(1)
+        ])
     created = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
         
