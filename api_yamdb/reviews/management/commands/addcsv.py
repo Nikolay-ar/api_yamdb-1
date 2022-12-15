@@ -1,12 +1,16 @@
 from django.core.management.base import BaseCommand, CommandError
-from reviews.models import *
+from reviews.models import (Categories, Genres, Titles,
+                            GenresTitles, Review, Comment)
+from users.models import User
 
 
 class Command(BaseCommand):
+    file_table = {
 
+    }
 
     def add_arguments(self, parser):
-        parser.add_argument('poll_ids', nargs='+', type=int)
+        parser.add_argument('file_name', nargs='+', type=int)
 
     def handle(self, *args, **options):
         for poll_id in options['poll_ids']:
