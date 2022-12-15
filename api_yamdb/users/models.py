@@ -2,15 +2,17 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-class Roles(models.TextChoices):
-    """Выбор роли пользователя"""
+class User(AbstractUser):
+    """Создание кастомного класса User, описание базовых функций"""
+
     ADMIN = 'admin'
     MODERATOR = 'moderator'
     USER = 'user'
-
-
-class User(AbstractUser):
-    """Создание кастомного класса User, описание базовых функций"""
+    ROLES = (
+        (ADMIN, 'Administrator'),
+        (MODERATOR, 'Moderator'),
+        (USER, 'User'),
+    )
 
     username = models.CharField(
         max_length=150,
@@ -44,24 +46,25 @@ class User(AbstractUser):
         verbose_name='Биография/О пользователе',
         help_text='Расскажите о себе'
     )
+
     role = models.CharField(
-        choices=Roles,
-        default=Roles.USER,
-        blank=True,
-        verbose_name='Выбор роли пользователя'
+        max_length=10,
+        choices=ROLES,
+        default=USER,
+        verbose_name='Роль пользователя'
     )
 
     @property
     def is_user(self):
-        return self.role == Roles.USER
+        return self.role == self.USER
 
     @property
     def is_moderator(self):
-        return self.role == Roles.MODERATOR
+        return self.role == self.MODERATOR
 
     @property
     def is_admin(self):
-        return self.role == Roles.ADMIN
+        return self.role == self.ADMIN
 
     def __str__(self):
         return self.username

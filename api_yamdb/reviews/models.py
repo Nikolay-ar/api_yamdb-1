@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-from api_yamdb.users.models import User
+from users.models import User
 
 
 class Categories(models.Model):
@@ -12,7 +12,6 @@ class Categories(models.Model):
         return self.name
 
     class Meta:
-        ordering = ('pub_date',)
         verbose_name = 'Катагория (Тип)'
         verbose_name_plural = 'Категории (Типы)'
 
@@ -37,10 +36,12 @@ class Titles(models.Model):
     category = models.ForeignKey(
         Categories, on_delete=models.SET_NULL,
         related_name='title',
+        null=True
     )
     genre = models.ForeignKey(
         Genres, on_delete=models.SET_NULL,
         related_name='title',
+        null=True
     )
 
     class Meta:
@@ -63,13 +64,13 @@ class Review(models.Model):
         Titles, on_delete=models.CASCADE, related_name='reviews')
     text = models.TextField()
     score = models.IntegerField(default=1,
-        validators=[
-            MaxValueValidator(10),
-            MinValueValidator(1)
-        ])
+                                validators=[
+                                    MaxValueValidator(10),
+                                    MinValueValidator(1)
+                                ])
     created = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
-        
+
 
 class Comment(models.Model):
     author = models.ForeignKey(
@@ -79,4 +80,3 @@ class Comment(models.Model):
     text = models.TextField()
     created = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
-
