@@ -23,10 +23,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         with open('file_name') as csvfile:
             reader = csv.DictReader(csvfile)
-            model_table = self.file_table['file_name']
+
             for row in reader:
-                data = model_table(currency=row['Currency'], name=row['Country'])
-                data.save()
+                # data = model_table(currency=row['Currency'], name=row['Country'])
+                # data.save()
 
         print('Data Uploaded!!')
 
