@@ -64,11 +64,11 @@ class Review(models.Model):
         Titles, on_delete=models.CASCADE, related_name='reviews')
     text = models.TextField()
     score = models.IntegerField(default=1,
-                                validators=[
-                                    MaxValueValidator(10),
-                                    MinValueValidator(1)
-                                ])
-    created = models.DateTimeField(
+        validators=[
+            MaxValueValidator(10),
+            MinValueValidator(1)
+        ])
+    pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
 
 
@@ -78,5 +78,5 @@ class Comment(models.Model):
     review = models.ForeignKey(
         Review, on_delete=models.CASCADE, related_name='comments')
     text = models.TextField()
-    created = models.DateTimeField(
+    pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
