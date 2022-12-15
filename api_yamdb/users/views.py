@@ -11,8 +11,8 @@ from rest_framework.response import Response
 from .models import User
 from .serializers import (AdminUserSerializer, AuthentificationSerializer,
                           RegistrationSerializer, UserSerializer)
-from ..api.permissions import IsUserOrIsModeratorOrAdminOrReadOnly
-from ..api_yamdb.settings import DEFAULT_FROM_EMAIL
+from api.permissions import IsAuthorOrIsModeratorOrAdminOrReadOnly
+from api_yamdb.settings import DEFAULT_FROM_EMAIL
 
 
 @api_view(['POST'])
@@ -63,7 +63,7 @@ def confirmation_view(request):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = AdminUserSerializer
-    permission_classes = (IsUserOrIsModeratorOrAdminOrReadOnly,)
+    permission_classes = (IsAuthorOrIsModeratorOrAdminOrReadOnly,)
     lookup_field = 'username'
 
     @action(

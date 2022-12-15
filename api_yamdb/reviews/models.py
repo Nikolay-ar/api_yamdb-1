@@ -12,7 +12,6 @@ class Categories(models.Model):
         return self.name
 
     class Meta:
-        ordering = ('pub_date',)
         verbose_name = 'Катагория (Тип)'
         verbose_name_plural = 'Категории (Типы)'
 
@@ -37,10 +36,12 @@ class Titles(models.Model):
     category = models.ForeignKey(
         Categories, on_delete=models.SET_NULL,
         related_name='title',
+        null=True
     )
     genre = models.ForeignKey(
         Genres, on_delete=models.SET_NULL,
         related_name='title',
+        null=True
     )
 
     class Meta:
@@ -69,7 +70,7 @@ class Review(models.Model):
         ])
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
-        
+
 
 class Comment(models.Model):
     author = models.ForeignKey(
@@ -79,4 +80,3 @@ class Comment(models.Model):
     text = models.TextField()
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
-
