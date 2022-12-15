@@ -41,7 +41,7 @@ class GenresViewSet(CreateListDestroyViewSet):
     permission_classes = (IsAdminOrReadOnly,)
    
    
-class ReviewVieSet(viewsets.ModelViewSet):
+class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
 
 
