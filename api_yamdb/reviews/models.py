@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-from api_yamdb.users.models import User
+from users.models import User
 
 
 class Categories(models.Model):
@@ -67,7 +67,7 @@ class Review(models.Model):
             MaxValueValidator(10),
             MinValueValidator(1)
         ])
-    created = models.DateTimeField(
+    pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
         
 
@@ -77,6 +77,6 @@ class Comment(models.Model):
     review = models.ForeignKey(
         Review, on_delete=models.CASCADE, related_name='comments')
     text = models.TextField()
-    created = models.DateTimeField(
+    pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
 

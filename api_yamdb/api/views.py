@@ -6,7 +6,10 @@ from rest_framework.pagination import LimitOffsetPagination
 from .permissions import IsAdminOrReadOnly
 from .serializers import (CategoriesSerializer,
                           GenresSerializer,
-                          TitlesSerializer, CommentSerializer)
+                          TitlesSerializer,
+                          CommentSerializer,
+                          ReviewSerializer)
+
 
 from ..reviews.models import Categories, Titles, Genres, Review, Comment
 
@@ -38,6 +41,10 @@ class GenresViewSet(CreateListDestroyViewSet):
     permission_classes = (IsAdminOrReadOnly,)
    
    
+class ReviewViewSet(viewsets.ModelViewSet):
+    serializer_class = ReviewSerializer
+
+
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     # permission_classes = (OwnerOrReadOnly,)
