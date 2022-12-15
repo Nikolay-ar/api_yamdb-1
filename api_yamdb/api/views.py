@@ -7,10 +7,11 @@ from rest_framework.permissions import IsAuthenticated
 from .permissions import IsAdminOrReadOnly
 from .serializers import (CategoriesSerializer,
                           GenresSerializer,
-                          TitlesSerializer)
+                          TitlesSerializer,
+                          CommentSerializer,
+                          ReviewSerializer)
 
 from ..reviews.models import Categories, Titles, Genres, Review, Comment
-from api.serializers import CommentSerializer
 
 
 class CreateListDestroyViewSet(mixins.CreateModelMixin,
@@ -40,6 +41,10 @@ class GenresViewSet(CreateListDestroyViewSet):
     permission_classes = (IsAdminOrReadOnly,)
    
    
+class ReviewVieSet(viewsets.ModelViewSet):
+    serializer_class = ReviewSerializer
+
+
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     # permission_classes = (OwnerOrReadOnly,)
