@@ -1,10 +1,7 @@
 from rest_framework import serializers
 
-from reviews.models import (Categories,
-                                      Genres,
-                                      Titles,
-                                      Comment,
-                                      Review)
+from reviews.models import (Categories, Genres, Titles, Comment,
+                            Review)
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
@@ -36,7 +33,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        fields = ('id', 'text', 'author','score', 'pub_date')
+        fields = ('id', 'text', 'author', 'score', 'pub_date')
         model = Review
 
 
