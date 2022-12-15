@@ -1,3 +1,5 @@
+import csv
+
 from django.core.management.base import BaseCommand, CommandError
 from reviews.models import (Categories, Genres, Titles,
                             GenresTitles, Review, Comment)
@@ -6,31 +8,26 @@ from users.models import User
 
 class Command(BaseCommand):
     file_table = {
-
+        'category.csv': Categories,
+        'genre': Genres,
+        'titles': Titles,
+        'genre_title': GenresTitles,
+        'review': Review,
+        'comments': Comment,
+        'users.csv': User,
     }
 
     def add_arguments(self, parser):
         parser.add_argument('file_name', nargs='+', type=int)
 
     def handle(self, *args, **options):
-        for poll_id in options['poll_ids']:
-            try:
-                poll = Poll.objects.get(pk=poll_id)
-            except Poll.DoesNotExist:
-                raise CommandError('Poll "%s" does not exist' % poll_id)
+        with open('file_name') as csvfile:
+            reader = csv.DictReader(csvfile)
+            model_table = self.file_table['file_name']
+            for row in reader:
+                data = model_table(currency=row['Currency'], name=row['Country'])
+                data.save()
 
-            poll.opened = False
-            poll.save()
-
-            self.stdout.write(self.style.SUCCESS('Successfully closed poll "%s"' % poll_id))
+        print('Data Uploaded!!')
 
 
-def import_countries(request):
-    with open(
-            'C:/python/Azuro/azuro_django/pms/templates/pms/countryname.csv') as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            data = Country(currency=row['Currency'], name=row['Country'])
-            data.save()
-
-    return HttpResponse('Data Uploaded!!')
