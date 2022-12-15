@@ -5,7 +5,7 @@ from .models import Categories, Genres, Titles, GenresTitles
 
 class TitlesAdmin(admin.ModelAdmin):
     list_display = (
-        'pk', 'name', 'year', 'description', 'rating', 'сategory', 'genre')
+        'pk', 'name', 'year', 'description', 'rating', 'category', 'genre')
     list_editable = ('category',)
     search_fields = ('year', 'name', 'genre',)
     list_filter = ('name',)
