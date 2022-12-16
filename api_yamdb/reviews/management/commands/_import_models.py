@@ -1,27 +1,28 @@
 import csv
 
-from django.core.management import CommandError
 from reviews.models import (Categories, Genres, Titles,
                             GenresTitles, Review, Comment)
 from users.models import User
 
+from api_yamdb.settings import STATICFILES_DIRS
+
 
 def import_categories():
-    with open('data/category.csv') as csvfile:
+    with open('static/data/category.csv', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         try:
             for row in reader:
                 data = Categories(id=row['id'],
                                   name=row['name'],
                                   slug=row['slug'])
-            data.save()
+                data.save()
         except Exception as error:
             raise ImportError(
-                f'При импорте category.csv произошла ошибка{error}')
+                f'При импорте category.csv произошла ошибка {error}')
 
 
 def import_genres():
-    with open('data/genre.csv') as csvfile:
+    with open('static/data/genre.csv', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         try:
             for row in reader:
@@ -31,29 +32,28 @@ def import_genres():
                 data.save()
         except Exception as error:
             raise ImportError(
-                f'При импорте genre.csv произошла ошибка{error}')
+                f'При импорте genre.csv произошла ошибка {error}')
 
 
 def import_titles():
-    with open('data/titles.csv') as csvfile:
+    with open('static/data/titles.csv', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         try:
             for row in reader:
                 data = Titles(id=row['id'],
                               name=row['name'],
                               year=row['year'],
-                              description=row['description'],
                               category=Categories.objects.get(
                                   id=row['category'])
                               )
                 data.save()
         except Exception as error:
             raise ImportError(
-                f'При импорте titles.csv произошла ошибка{error}')
+                f'При импорте titles.csv произошла ошибка {error}')
 
 
 def import_genres_title():
-    with open('data/genre_title.csv') as csvfile:
+    with open('static/data/genre_title.csv', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         try:
             for row in reader:
@@ -65,11 +65,11 @@ def import_genres_title():
                 data.save()
         except Exception as error:
             raise ImportError(
-                f'При импорте genre_title.csv произошла ошибка{error}')
+                f'При импорте genre_title.csv произошла ошибка {error}')
 
 
 def import_users():
-    with open('data/users.csv') as csvfile:
+    with open('static/data/users.csv', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         try:
             for row in reader:
@@ -83,11 +83,11 @@ def import_users():
                 data.save()
         except Exception as error:
             raise ImportError(
-                f'При импорте users.csv произошла ошибка{error}')
+                f'При импорте users.csv произошла ошибка {error}')
 
 
 def import_review():
-    with open('data/review.csv') as csvfile:
+    with open('static/data/review.csv', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         try:
             for row in reader:
@@ -102,23 +102,23 @@ def import_review():
                 data.save()
         except Exception as error:
             raise ImportError(
-                f'При импорте review.csv произошла ошибка{error}')
+                f'При импорте review.csv произошла ошибка {error}')
 
 
 def import_comments():
-    with open('data/comments.csv') as csvfile:
+    with open('static/data/comments.csv', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         try:
             for row in reader:
                 data = Comment(id=row['id'],
                                review=Review.objects.get(
-                                   id=row['review_id'],
-                                   text=row['text'],
-                                   author=User.objects.get(
-                                       id=row['author']),
-                                   pub_date=row['pub_date'])
+                                   id=row['review_id']),
+                               text=row['text'],
+                               author=User.objects.get(
+                                   id=row['author']),
+                               pub_date=row['pub_date']
                                )
                 data.save()
         except Exception as error:
             raise ImportError(
-                f'При импорте comments.csv произошла ошибка{error}')
+                f'При импорте comments.csv произошла ошибка {error}')
