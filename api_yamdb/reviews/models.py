@@ -9,7 +9,7 @@ class Categories(models.Model):
     slug = models.SlugField(max_length=50, unique=True)
 
     def __str__(self):
-        return self.name
+        return self.slug
 
     class Meta:
         verbose_name = 'Катагория (Тип)'
@@ -21,7 +21,7 @@ class Genres(models.Model):
     slug = models.SlugField(max_length=50, unique=True)
 
     def __str__(self):
-        return self.name
+        return self.slug
 
     class Meta:
         verbose_name = 'Жанр'
@@ -37,6 +37,9 @@ class Titles(models.Model):
         related_name='title',
         null=True
     )
+
+    def __str__(self):
+        return self.name[:15]
 
     class Meta:
         verbose_name = 'Произведение'
