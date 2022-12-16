@@ -5,7 +5,7 @@ from users.models import User
 
 
 class Categories(models.Model):
-    name = models.TextField()
+    name = models.TextField(max_length=256)
     slug = models.SlugField(max_length=50, unique=True)
 
     def __str__(self):
@@ -17,7 +17,7 @@ class Categories(models.Model):
 
 
 class Genres(models.Model):
-    name = models.TextField()
+    name = models.TextField(max_length=256)
     slug = models.SlugField(max_length=50, unique=True)
 
     def __str__(self):
@@ -32,14 +32,8 @@ class Titles(models.Model):
     name = models.TextField()
     year = models.IntegerField('Год выпуска')
     description = models.TextField()
-    rating = models.IntegerField('Рейтинг', default=None)
     category = models.ForeignKey(
         Categories, on_delete=models.SET_NULL,
-        related_name='title',
-        null=True
-    )
-    genre = models.ForeignKey(
-        Genres, on_delete=models.SET_NULL,
         related_name='title',
         null=True
     )
@@ -64,10 +58,10 @@ class Review(models.Model):
         Titles, on_delete=models.CASCADE, related_name='reviews')
     text = models.TextField()
     score = models.IntegerField(default=1,
-        validators=[
-            MaxValueValidator(10),
-            MinValueValidator(1)
-        ])
+                                validators=[
+                                    MaxValueValidator(10),
+                                    MinValueValidator(1)
+                                ])
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
 
@@ -75,7 +69,6 @@ class Review(models.Model):
         verbose_name = 'Отзыв на произведение'
         verbose_name_plural = 'Отзывы на произведение'
         ordering = ['pub_date', 'titles']
-
 
 
 class Comment(models.Model):

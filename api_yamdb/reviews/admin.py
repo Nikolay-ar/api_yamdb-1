@@ -5,9 +5,9 @@ from .models import Categories, Genres, Titles, GenresTitles, Review, Comment
 
 class TitlesAdmin(admin.ModelAdmin):
     list_display = (
-        'pk', 'name', 'year', 'description', 'rating', 'category', 'genre')
+        'pk', 'name', 'year', 'description', 'category')
     list_editable = ('category',)
-    search_fields = ('year', 'name', 'genre',)
+    search_fields = ('year', 'name', )
     list_filter = ('name',)
 
 
