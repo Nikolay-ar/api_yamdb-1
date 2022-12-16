@@ -43,7 +43,6 @@ class GenresViewSet(CreateListDestroyViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     search_fields = ('name',)
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('category', 'genre', 'name', 'year')
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
