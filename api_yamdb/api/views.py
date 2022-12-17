@@ -12,7 +12,7 @@ from .serializers import (CategoriesSerializer,
                           ReviewSerializer)
 
 
-from reviews.models import Categories, Titles, Genres, Review, Comment
+from reviews.models import Categories, Titles, Genres, Reviews, Comments
 
 
 class CreateListDestroyViewSet(mixins.CreateModelMixin,
@@ -46,12 +46,12 @@ class GenresViewSet(CreateListDestroyViewSet):
     filter_backends = (DjangoFilterBackend,)
 
 
-class ReviewViewSet(viewsets.ModelViewSet):
+class ReviewsViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
 
     def get_queryset(self):
         title_id = self.kwargs.get('title_id')
-        new_queryset = Review.objects.filter(post=title_id)
+        new_queryset = Reviews.objects.filter(post=title_id)
         return new_queryset
 
     def perform_create(self, serializer):
@@ -60,13 +60,13 @@ class ReviewViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user, title=title)
 
 
-class CommentViewSet(viewsets.ModelViewSet):
+class CommentsViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     # permission_classes = (OwnerOrReadOnly,)
 
     def get_queryset(self):
         title_id = self.kwargs.get('title_id')
-        new_queryset = Comment.objects.filter(post=title_id)
+        new_queryset = Comments.objects.filter(post=title_id)
         return new_queryset
 
     def perform_create(self, serializer):
