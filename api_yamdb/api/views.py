@@ -41,6 +41,7 @@ class GenresViewSet(CreateListDestroyViewSet):
     queryset = Genres.objects.all()
     serializer_class = GenresSerializer
     permission_classes = (IsAdminOrReadOnly,)
+    pagination_class = LimitOffsetPagination
     search_fields = ('name',)
     filter_backends = (DjangoFilterBackend,)
 

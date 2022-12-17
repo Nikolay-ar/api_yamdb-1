@@ -1,30 +1,33 @@
 from rest_framework import serializers
 
 from reviews.models import (Categories, Genres, Titles, Comment,
-                            Review)
+                            Review, GenresTitles)
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Categories
-        fields = '__all__'
+        fields = ('name', 'slug')
 
 
 class GenresSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genres
-        fields = '__all__'
+        fields = ('name', 'slug')
 
 
 class TitlesSerializer(serializers.ModelSerializer):
     rating = serializers.SerializerMethodField()
+    category = CategoriesSerializer(required=False)
+    genre = GenresSerializer(many=True, required=False)
 
     class Meta:
         model = Titles
-        fields = '__all__'
+        fields = ('id', 'name', 'year', 'rating',
+                  'description', 'genre', 'category')
 
     def get_rating(self, obj):
-        return obj.birth_year
+        return 0
 
 
 class ReviewSerializer(serializers.ModelSerializer):
