@@ -45,6 +45,7 @@ class Titles(models.Model):
     class Meta:
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
+        ordering = ['name']
 
 
 class GenresTitles(models.Model):
