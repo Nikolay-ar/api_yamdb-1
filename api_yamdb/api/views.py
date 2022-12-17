@@ -2,7 +2,8 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework import mixins
-from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.pagination import LimitOffsetPagination, \
+    PageNumberPagination
 
 from .permissions import IsAdminOrReadOnly
 from .serializers import (CategoriesSerializer,
@@ -34,7 +35,7 @@ class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Titles.objects.all()
     serializer_class = TitlesSerializer
     permission_classes = (IsAdminOrReadOnly,)
-    pagination_class = LimitOffsetPagination
+    pagination_class = PageNumberPagination
 
 
 class GenresViewSet(CreateListDestroyViewSet):
