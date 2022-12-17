@@ -1,10 +1,8 @@
 import csv
 
 from reviews.models import (Categories, Genres, Titles,
-                            GenresTitles, Review, Comment)
+                            GenresTitles, Reviews, Comments)
 from users.models import User
-
-from api_yamdb.settings import STATICFILES_DIRS
 
 
 def import_categories():
@@ -91,14 +89,14 @@ def import_review():
         reader = csv.DictReader(csvfile)
         try:
             for row in reader:
-                data = Review(id=row['id'],
-                              titles=Titles.objects.get(
-                                  id=row['title_id']),
-                              text=row['text'],
-                              author=User.objects.get(
-                                  id=row['author']),
-                              score=row['score'],
-                              pub_date=row['pub_date'])
+                data = Reviews(id=row['id'],
+                               titles=Titles.objects.get(
+                                   id=row['title_id']),
+                               text=row['text'],
+                               author=User.objects.get(
+                                   id=row['author']),
+                               score=row['score'],
+                               pub_date=row['pub_date'])
                 data.save()
         except Exception as error:
             raise ImportError(
@@ -110,14 +108,14 @@ def import_comments():
         reader = csv.DictReader(csvfile)
         try:
             for row in reader:
-                data = Comment(id=row['id'],
-                               review=Review.objects.get(
-                                   id=row['review_id']),
-                               text=row['text'],
-                               author=User.objects.get(
-                                   id=row['author']),
-                               pub_date=row['pub_date']
-                               )
+                data = Comments(id=row['id'],
+                                review=Reviews.objects.get(
+                                    id=row['review_id']),
+                                text=row['text'],
+                                author=User.objects.get(
+                                    id=row['author']),
+                                pub_date=row['pub_date']
+                                )
                 data.save()
         except Exception as error:
             raise ImportError(
