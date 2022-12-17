@@ -28,7 +28,7 @@ class TitlesSerializer(serializers.ModelSerializer):
                   'description', 'genre', 'category')
 
     def get_rating(self, obj):
-        return obj.Reviews.all().aggregate(Avg('score'))['score__avg']
+        return obj.reviews.all().aggregate(Avg('score'))['score__avg']
 
 
 class ReviewSerializer(serializers.ModelSerializer):
