@@ -67,3 +67,31 @@ class AdminUserSerializer(serializers.ModelSerializer):
                   'last_name',
                   'bio',
                   'role']
+
+
+class SignUpSerializer(serializers.ModelSerializer):
+    """Сериализатор для получения кода авторизации на почту."""
+    class Meta:
+        model = User
+        fields = ('email', 'username')
+
+    def validate_username(self, value):
+        if value == 'me':
+            raise serializers.ValidationError(
+                'Вы не можете зарегистрироваться под именем me')
+        return value
+
+
+class GetTokenSerializer(serializers.ModelSerializer):
+    """Сериализатор для получения токена."""
+    username = serializers.CharField(
+        required=True)
+    confirmation_code = serializers.CharField(
+        required=True)
+
+    class Meta:
+        model = User
+        fields = (
+            'username',
+            'confirmation_code'
+        )

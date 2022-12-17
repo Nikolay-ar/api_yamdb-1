@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
-from reviews.models import (Categories, Genres, Titles, Comment,
-                            Review, GenresTitles)
+from reviews.models import (Categories, Genres, Titles, Comments,
+                            Reviews, GenresTitles)
+from django.db.models import Avg
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
@@ -27,7 +28,7 @@ class TitlesSerializer(serializers.ModelSerializer):
                   'description', 'genre', 'category')
 
     def get_rating(self, obj):
-        return 0
+        return obj.Reviews.all().aggregate(Avg('score'))['score__avg']
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -37,7 +38,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = ('id', 'text', 'author', 'score', 'pub_date')
-        model = Review
+        model = Reviews
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -47,4 +48,4 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = ('id', 'text', 'author', 'pub_date')
-        model = Comment
+        model = Comments

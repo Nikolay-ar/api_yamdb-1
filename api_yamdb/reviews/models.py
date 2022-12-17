@@ -60,13 +60,13 @@ class GenresTitles(models.Model):
         return f'{self.title} {self.genre}'
 
 
-class Review(models.Model):
+class Reviews(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='reviews')
     titles = models.ForeignKey(
         Titles, on_delete=models.CASCADE, related_name='reviews')
     text = models.TextField()
-    score = models.IntegerField(default=1,
+    score = models.SmallIntegerField(default=1,
                                 validators=[
                                     MaxValueValidator(10),
                                     MinValueValidator(1)
@@ -80,11 +80,11 @@ class Review(models.Model):
         ordering = ['pub_date', 'titles']
 
 
-class Comment(models.Model):
+class Comments(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='comments')
     review = models.ForeignKey(
-        Review, on_delete=models.CASCADE, related_name='comments')
+        Reviews, on_delete=models.CASCADE, related_name='comments')
     text = models.TextField()
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
