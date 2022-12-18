@@ -36,7 +36,7 @@ class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Titles.objects.all()
     serializer_class = TitlesSerializer
     permission_classes = (IsAdminOrReadOnly,)
-    pagination_class = PageNumberPagination
+
 
 
 class GenresViewSet(CreateListDestroyViewSet):

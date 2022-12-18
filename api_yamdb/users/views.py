@@ -51,15 +51,17 @@ def confirmation_view(request):
     """Функция для получения токена."""
     serializer = GetTokenSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    confirmation_code = serializer.validated_data.get('confirmation_code')
+    code = request.data.get('confirmation_code')
+    # confirmation_code = serializer.validated_data.get('confirmation_code')
     username = serializer.validated_data.get('username')
     user = get_object_or_404(User, username=username)
-    if user.confirmation_code != confirmation_code:
+    if not default_token_generator.check_token(user, code):
         response = {'Неверный код'}
         return Response(response, status=HTTP_400_BAD_REQUEST)
     token = str(RefreshToken.for_user(user).access_token)
     response = {'token': token}
     return Response(response, status=HTTP_200_OK)
+
 
 class UserViewSet(viewsets.ModelViewSet):
     """Вьюсет для работы с пользователями."""

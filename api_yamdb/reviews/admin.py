@@ -7,7 +7,7 @@ class TitlesAdmin(admin.ModelAdmin):
     list_display = (
         'pk', 'name', 'year', 'description', 'category')
     list_editable = ('category',)
-    search_fields = ('year', 'name', )
+    search_fields = ('year', 'name',)
     list_filter = ('name',)
 
 
@@ -36,7 +36,6 @@ class ReviewAdmin(admin.ModelAdmin):
     search_fields = ('author',)
     list_filter = ('score',)
     empty_value_display = '-пусто-'
-
 
 
 class CommentAdmin(admin.ModelAdmin):
