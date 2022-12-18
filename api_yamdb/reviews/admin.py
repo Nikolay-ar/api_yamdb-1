@@ -32,7 +32,7 @@ class GenresTitlesAdmin(admin.ModelAdmin):
 
 
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'author', 'titles', 'text', 'score', 'pub_date')
+    list_display = ('pk', 'author', 'title', 'text', 'score', 'pub_date')
     search_fields = ('author',)
     list_filter = ('score',)
     empty_value_display = '-пусто-'

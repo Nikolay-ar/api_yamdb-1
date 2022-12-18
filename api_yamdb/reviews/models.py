@@ -63,7 +63,7 @@ class GenresTitles(models.Model):
 class Reviews(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='reviews')
-    titles = models.ForeignKey(
+    title = models.ForeignKey(
         Titles, on_delete=models.CASCADE, related_name='reviews')
     text = models.TextField()
     score = models.SmallIntegerField(default=1,
@@ -77,7 +77,7 @@ class Reviews(models.Model):
     class Meta:
         verbose_name = 'Отзыв на произведение'
         verbose_name_plural = 'Отзывы на произведение'
-        ordering = ['pub_date', 'titles']
+        ordering = ['pub_date', 'title']
 
 
 class Comments(models.Model):

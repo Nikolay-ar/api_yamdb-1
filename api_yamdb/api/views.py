@@ -4,6 +4,8 @@ from rest_framework import mixins, filters
 from rest_framework import viewsets
 from rest_framework.pagination import (LimitOffsetPagination,
                                        PageNumberPagination)
+from rest_framework.permissions import AllowAny
+
 from reviews.models import Categories, Titles, Genres, Reviews, Comments
 
 from .permissions import IsAdminOrReadOnly
@@ -48,10 +50,13 @@ class GenresViewSet(CreateListDestroyViewSet):
 
 class ReviewsViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
+    permission_classes = (IsAdminOrReadOnly ,)
+    pagination_class = PageNumberPagination
+
 
     def get_queryset(self):
         title_id = self.kwargs.get('title_id')
-        new_queryset = Reviews.objects.filter(post=title_id)
+        new_queryset = Reviews.objects.filter(title=title_id)
         return new_queryset
 
     def perform_create(self, serializer):
@@ -62,8 +67,9 @@ class ReviewsViewSet(viewsets.ModelViewSet):
 
 class CommentsViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+    pagination_class = PageNumberPagination
 
-    # permission_classes = (OwnerOrReadOnly,)
 
     def get_queryset(self):
         title_id = self.kwargs.get('title_id')
