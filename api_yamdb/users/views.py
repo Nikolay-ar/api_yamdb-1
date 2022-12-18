@@ -1,7 +1,6 @@
 from http import HTTPStatus
 
 from django.contrib.auth.tokens import default_token_generator
-from django.utils.crypto import get_random_string
 from rest_framework.pagination import LimitOffsetPagination
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404

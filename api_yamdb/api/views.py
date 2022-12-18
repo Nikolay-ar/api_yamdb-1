@@ -2,13 +2,15 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, filters
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.pagination import (LimitOffsetPagination,
                                        PageNumberPagination)
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from reviews.models import Categories, Titles, Genres, Reviews, Comments
 
-from .permissions import IsAdminOrReadOnly
+from .permissions import IsAdminOrReadOnly, \
+    IsAuthorOrIsModeratorOrAdminOrReadOnly
 from .serializers import (CategoriesSerializer,
                           GenresSerializer,
                           TitlesSerializer,
@@ -38,7 +40,6 @@ class TitlesViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
 
 
-
 class GenresViewSet(CreateListDestroyViewSet):
     queryset = Genres.objects.all()
     serializer_class = GenresSerializer
@@ -50,15 +51,16 @@ class GenresViewSet(CreateListDestroyViewSet):
 
 class ReviewsViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = (IsAdminOrReadOnly ,)
+    permission_classes = (IsAuthorOrIsModeratorOrAdminOrReadOnly,)
     pagination_class = PageNumberPagination
-
 
     def get_queryset(self):
         title_id = self.kwargs.get('title_id')
         new_queryset = Reviews.objects.filter(title=title_id)
         return new_queryset
 
+    @action(detail=False, permission_classes=[IsAuthenticated],
+            methods=['post'])
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')
         title = get_object_or_404(Titles, id=title_id)
@@ -69,7 +71,6 @@ class CommentsViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = PageNumberPagination
-
 
     def get_queryset(self):
         title_id = self.kwargs.get('title_id')
