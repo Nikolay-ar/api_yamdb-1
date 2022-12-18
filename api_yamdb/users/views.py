@@ -1,5 +1,6 @@
 from http import HTTPStatus
 
+from django.contrib.auth.tokens import default_token_generator
 from django.utils.crypto import get_random_string
 from rest_framework.pagination import LimitOffsetPagination
 from django.core.mail import send_mail
@@ -25,17 +26,20 @@ def signup_view(request):
     serializer.is_valid(raise_exception=True)
     email = serializer.validated_data.get('email')
     username = serializer.validated_data.get('username')
-    confirmation_code = get_random_string(12)
-    User.objects.create_user(
+    # confirmation_code = get_random_string(12)
+    new_user = User.objects.create_user(
         username=username,
         email=email,
-        confirmation_code=confirmation_code
+        # confirmation_code=confirmation_code
     )
+    new_user.save()
+    confirmation_code = default_token_generator.make_token(new_user)
     send_mail(
-        'Код подтверждения',
-        f'Код подтверждения: {confirmation_code}',
-        DEFAULT_FROM_EMAIL,
-        [email],
+        subject='Код подтверждения',
+        message=f'Регистрация прошла успешно! '
+                f'Код подтверждения: {confirmation_code}',
+        from_email=DEFAULT_FROM_EMAIL,
+        recipient_list=[email],
         fail_silently=False
     )
     return Response(serializer.data, status=HTTP_200_OK)
