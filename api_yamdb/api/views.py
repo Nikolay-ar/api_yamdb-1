@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import mixins
+from rest_framework import mixins, filters
 from rest_framework import viewsets
 from rest_framework.pagination import (LimitOffsetPagination,
                                        PageNumberPagination)
@@ -28,6 +28,7 @@ class CategoriesViewSet(CreateListDestroyViewSet):
     serializer_class = CategoriesSerializer
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = LimitOffsetPagination
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     search_fields = ('name',)
 
 
@@ -43,8 +44,8 @@ class GenresViewSet(CreateListDestroyViewSet):
     serializer_class = GenresSerializer
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = LimitOffsetPagination
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     search_fields = ('name',)
-    filter_backends = (DjangoFilterBackend,)
 
 
 class ReviewsViewSet(viewsets.ModelViewSet):
@@ -69,7 +70,6 @@ class CommentsViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = PageNumberPagination
 
-    # permission_classes = (OwnerOrReadOnly,)
 
     def get_queryset(self):
         title_id = self.kwargs.get('title_id')

@@ -29,7 +29,7 @@ class Genres(models.Model):
 
 
 class Titles(models.Model):
-    name = models.TextField()
+    name = models.TextField(max_length=256)
     year = models.IntegerField('Год выпуска')
     description = models.TextField()
     category = models.ForeignKey(
@@ -67,10 +67,10 @@ class Reviews(models.Model):
         Titles, on_delete=models.CASCADE, related_name='reviews')
     text = models.TextField()
     score = models.SmallIntegerField(default=1,
-                                validators=[
-                                    MaxValueValidator(10),
-                                    MinValueValidator(1)
-                                ])
+                                     validators=[
+                                         MaxValueValidator(10),
+                                         MinValueValidator(1)
+                                     ])
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
 
