@@ -29,7 +29,6 @@ def signup_view(request):
     new_user = User.objects.create_user(
         username=username,
         email=email,
-        # confirmation_code=confirmation_code
     )
     new_user.save()
     confirmation_code = default_token_generator.make_token(new_user)

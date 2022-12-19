@@ -1,3 +1,5 @@
+import re
+
 from rest_framework import serializers
 
 from .models import User
@@ -71,14 +73,19 @@ class AdminUserSerializer(serializers.ModelSerializer):
 
 class SignUpSerializer(serializers.ModelSerializer):
     """Сериализатор для получения кода авторизации на почту."""
+
     class Meta:
         model = User
         fields = ('email', 'username')
 
     def validate_username(self, value):
+        pattern = re.compile(r'^[\w.@+-]+\Z')
         if value == 'me':
             raise serializers.ValidationError(
                 'Вы не можете зарегистрироваться под именем me')
+        if pattern.match(value) is None:
+            raise serializers.ValidationError(
+                'Username должно соответствовать паттерну')
         return value
 
 
