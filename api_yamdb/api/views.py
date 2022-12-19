@@ -7,7 +7,7 @@ from rest_framework.pagination import (LimitOffsetPagination,
                                        PageNumberPagination)
 from rest_framework.permissions import IsAuthenticated
 from reviews.models import (Categories, Titles, Genres,
-                            Reviews, GenresTitles)
+                            Reviews, GenresTitles, Comments)
 
 from .permissions import (IsAdminOrReadOnly,
                           IsAuthorOrIsModeratorOrAdminOrReadOnly)
@@ -41,7 +41,7 @@ class TitlesViewSet(viewsets.ModelViewSet):
     filterset_fields = ('name', 'year')
 
     def get_serializer_class(self):
-        if self.action == 'create':
+        if self.action == 'create' or self.action == 'update':
             return PostTitlesSerializer
         return TitlesSerializer
 

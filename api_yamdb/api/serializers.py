@@ -1,6 +1,7 @@
 from django.db.models import Avg
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from rest_framework.generics import get_object_or_404
+
 from reviews.models import (Categories, Genres, Titles, Comments,
                             Reviews, GenresTitles)
 
@@ -38,28 +39,20 @@ class TitlesSerializer(serializers.ModelSerializer):
 
 
 class PostTitlesSerializer(serializers.ModelSerializer):
-    category = serializers.CharField(source='slug')
-    genre = GenresSerializer(required=False, many=True,
-                             source='slug', read_only=True)
+    category = serializers.SlugRelatedField(
+        queryset=Categories.objects.all(),
+        slug_field='slug'
+    )
+    genre = serializers.SlugRelatedField(
+        many=True,
+        queryset=Genres.objects.all(),
+        slug_field='slug'
+    )
 
     class Meta:
         model = Titles
         fields = ('id', 'name', 'year',
                   'description', 'genre', 'category')
-
-    def create(self, validated_data):
-        if 'genre' not in self.initial_data:
-            title = Titles.objects.create(**validated_data)
-            return title
-        else:
-            genres = validated_data.pop('genre')
-            title = Titles.objects.create(**validated_data)
-            for genre in genres:
-                current_genre = get_object_or_404(Genres, genre=genre)
-                GenresTitles.objects.create(
-                    genre=current_genre, title=title
-                )
-            return title
 
 
 class ReviewSerializer(serializers.ModelSerializer):
