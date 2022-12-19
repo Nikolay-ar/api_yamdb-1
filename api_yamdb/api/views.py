@@ -94,16 +94,11 @@ class CommentsViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
 
     def get_queryset(self):
-        # title_id = self.kwargs.get('title_id')
-        review_id = self.kwargs.get('review_id')
-        new_queryset = Reviews.objects.filter(review=review_id)
+        title_id = self.kwargs.get('title_id')
+        new_queryset = Comments.objects.filter(post=title_id)
         return new_queryset
 
-    @action(detail=False, permission_classes=[IsAuthenticated],
-            methods=['post'])
     def perform_create(self, serializer):
-        # title_id = self.kwargs.get('title_id')
-        review_id = self.kwargs.get('review_id')
-        review = get_object_or_404(Reviews, id=review_id)
-        # title = get_object_or_404(Titles, id=title_id)
-        serializer.save(author=self.request.user, review=review)
+        title_id = self.kwargs.get('title_id')
+        title = get_object_or_404(Titles, id=title_id)
+        serializer.save(author=self.request.user, title=title)
