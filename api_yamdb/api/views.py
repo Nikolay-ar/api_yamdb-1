@@ -41,7 +41,7 @@ class TitlesViewSet(viewsets.ModelViewSet):
     filterset_fields = ('name', 'year')
 
     def get_serializer_class(self):
-        if self.action == 'create' or self.action == 'update':
+        if self.request.method in ['POST', 'PATCH']:
             return PostTitlesSerializer
         return TitlesSerializer
 
