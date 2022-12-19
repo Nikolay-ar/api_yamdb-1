@@ -5,17 +5,17 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import (LimitOffsetPagination,
                                        PageNumberPagination)
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
+from reviews.models import (Categories, Titles, Genres,
+                            Reviews, GenresTitles)
 
-from reviews.models import Categories, Titles, Genres, Reviews, Comments
-
-from .permissions import IsAdminOrReadOnly, \
-    IsAuthorOrIsModeratorOrAdminOrReadOnly
+from .permissions import (IsAdminOrReadOnly,
+                          IsAuthorOrIsModeratorOrAdminOrReadOnly)
 from .serializers import (CategoriesSerializer,
                           GenresSerializer,
                           TitlesSerializer,
                           CommentSerializer,
-                          ReviewSerializer)
+                          ReviewSerializer, PostTitlesSerializer)
 
 
 class CreateListDestroyViewSet(mixins.CreateModelMixin,
@@ -31,13 +31,33 @@ class CategoriesViewSet(CreateListDestroyViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = LimitOffsetPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    lookup_field = 'slug'
     search_fields = ('name',)
 
 
 class TitlesViewSet(viewsets.ModelViewSet):
-    queryset = Titles.objects.all()
-    serializer_class = TitlesSerializer
     permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filterset_fields = ('name', 'year')
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return PostTitlesSerializer
+        return TitlesSerializer
+
+    def get_queryset(self):
+        queryset = Titles.objects.all()
+        category_slug = self.request.query_params.get('category')
+        genre_slug = self.request.query_params.get('genre')
+        if category_slug is not None:
+            queryset = queryset.filter(
+                category=Categories.objects.get(slug=category_slug)
+            )
+        if genre_slug is not None:
+            queryset = queryset.filter(
+                genre=Genres.objects.get(slug=genre_slug)
+            )
+        return queryset
 
 
 class GenresViewSet(CreateListDestroyViewSet):
@@ -46,6 +66,7 @@ class GenresViewSet(CreateListDestroyViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = LimitOffsetPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    lookup_field = 'slug'
     search_fields = ('name',)
 
 
