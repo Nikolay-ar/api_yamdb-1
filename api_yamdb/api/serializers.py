@@ -60,6 +60,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only=True, slug_field='username'
     )
 
+
     class Meta:
         fields = ('id', 'text', 'author', 'score', 'pub_date')
         model = Reviews
