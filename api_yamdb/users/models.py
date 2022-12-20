@@ -2,17 +2,18 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from users.validators import UsernameValidator
 
+ADMIN = 'admin'
+MODERATOR = 'moderator'
+USER = 'user'
+ROLES = (
+    (ADMIN, 'Administrator'),
+    (MODERATOR, 'Moderator'),
+    (USER, 'User'),
+)
+
+
 class User(AbstractUser):
     """Создание кастомного класса User, описание базовых функций"""
-
-    ADMIN = 'admin'
-    MODERATOR = 'moderator'
-    USER = 'user'
-    ROLES = (
-        (ADMIN, 'Administrator'),
-        (MODERATOR, 'Moderator'),
-        (USER, 'User'),
-    )
 
     username_validator = UsernameValidator()
 
@@ -20,7 +21,7 @@ class User(AbstractUser):
         max_length=150,
         unique=True,
         db_index=True,
-        validators=[username_validator],        
+        validators=[username_validator],
         verbose_name='Никнейм'
     )
 
@@ -62,17 +63,15 @@ class User(AbstractUser):
 
     @property
     def is_moderator(self):
-        return self.role == self.MODERATOR
+        return self.role == MODERATOR
 
     @property
     def is_admin(self):
-        return self.role == self.ADMIN or self.is_superuser
-
+        return self.role == ADMIN or self.is_superuser
 
     @property
     def is_user(self):
-        return self.role == self.USER
-
+        return self.role == USER
 
     def __str__(self):
         return self.username
