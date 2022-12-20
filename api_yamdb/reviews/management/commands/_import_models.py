@@ -90,7 +90,7 @@ def import_review():
         try:
             for row in reader:
                 data = Reviews(id=row['id'],
-                               titles=Titles.objects.get(
+                               title=Titles.objects.get(
                                    id=row['title_id']),
                                text=row['text'],
                                author=User.objects.get(
