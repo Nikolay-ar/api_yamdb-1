@@ -89,6 +89,9 @@ class Comments(models.Model):
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
 
+    def __str__(self):
+        return self.author
+
     class Meta:
         verbose_name = 'Комментарий к отзыву'
         verbose_name_plural = 'Комментарии к отзыву'

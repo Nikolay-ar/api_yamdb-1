@@ -102,3 +102,4 @@ class GetTokenSerializer(serializers.ModelSerializer):
             'username',
             'confirmation_code'
         )
+

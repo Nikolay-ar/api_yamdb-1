@@ -1,3 +1,4 @@
+import re
 from http import HTTPStatus
 
 from django.contrib.auth.tokens import default_token_generator
@@ -8,8 +9,8 @@ from rest_framework import viewsets
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import filters
 
 from .models import User
 from .serializers import (UserSerializer, SignUpSerializer, GetTokenSerializer)
@@ -25,7 +26,6 @@ def signup_view(request):
     serializer.is_valid(raise_exception=True)
     email = serializer.validated_data.get('email')
     username = serializer.validated_data.get('username')
-    # confirmation_code = get_random_string(12)
     new_user = User.objects.create_user(
         username=username,
         email=email,
@@ -40,7 +40,7 @@ def signup_view(request):
         recipient_list=[email],
         fail_silently=False
     )
-    return Response(serializer.data, status=HTTP_200_OK)
+    return Response(serializer.data, status=HTTPStatus.OK.value)
 
 
 @api_view(['POST'])
@@ -55,10 +55,10 @@ def confirmation_view(request):
     user = get_object_or_404(User, username=username)
     if not default_token_generator.check_token(user, code):
         response = {'Неверный код'}
-        return Response(response, status=HTTP_400_BAD_REQUEST)
+        return Response(response, status=HTTPStatus.BAD_REQUEST.value)
     token = str(RefreshToken.for_user(user).access_token)
     response = {'token': token}
-    return Response(response, status=HTTP_200_OK)
+    return Response(response, status=HTTPStatus.OK.value)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -69,9 +69,11 @@ class UserViewSet(viewsets.ModelViewSet):
     lookup_field = 'username'
     permission_classes = [IsAdmin]
     search_fields = ('username',)
+    filter_backends = (filters.SearchFilter, )
+    filterset_fields = ('username')
 
     @action(detail=False, permission_classes=[IsAuthenticated],
-            methods=['get', 'patch'], url_path='me')
+            methods=['GET', 'PATCH'], url_path='me')
     def get_or_update_self(self, request):
         """Редактирование и получение информации профиля."""
         user = request.user
@@ -85,7 +87,7 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer = UserSerializer(
                 user,
                 data=request.data,
-                partial=True
+                partial=True,               
             )
             serializer.is_valid(raise_exception=True)
             serializer.save(role=user.role)
