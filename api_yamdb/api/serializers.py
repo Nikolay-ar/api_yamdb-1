@@ -1,9 +1,8 @@
 from django.db.models import Avg
-from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 from reviews.models import (Categories, Comments, Genres, GenresTitles,
-                            Reviews, Titles)
+                            Review, Title)
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
@@ -30,7 +29,7 @@ class TitlesSerializer(serializers.ModelSerializer):
     genre = GenresSerializer(many=True, read_only=True)
 
     class Meta:
-        model = Titles
+        model = Title
         fields = ('id', 'name', 'year', 'rating',
                   'description', 'genre', 'category')
 
@@ -50,7 +49,7 @@ class PostTitlesSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Titles
+        model = Title
         fields = ('id', 'name', 'year',
                   'description', 'genre', 'category')
 
@@ -63,11 +62,15 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = ('id', 'text', 'author', 'score', 'pub_date')
-        model = Reviews
+        model = Review
 
-    # def validate(self, data):
-    #     title = self.context.get('view').kwargs['title_id']
-    #     author = self.context['request'].user
+    def validate(self, data):
+        title = self.context.get('view').kwargs['title_id']
+        author = self.context['request'].user
+        if Review.objects.filter(author=author, title=title).exists():
+            raise serializers.ValidationError(
+                'Нельзя добавлять больше одного отзыва')
+        return data
 
 
 class CommentSerializer(serializers.ModelSerializer):
