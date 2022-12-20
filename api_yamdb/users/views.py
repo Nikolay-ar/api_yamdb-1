@@ -1,21 +1,20 @@
-import re
 from http import HTTPStatus
 
-from django.contrib.auth.tokens import default_token_generator
-from rest_framework.pagination import LimitOffsetPagination
-from django.core.mail import send_mail
-from django.shortcuts import get_object_or_404
+from rest_framework import filters
 from rest_framework import viewsets
 from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework import filters
 
-from .models import User
-from .serializers import (UserSerializer, SignUpSerializer, GetTokenSerializer)
 from api.permissions import IsAdmin
 from api_yamdb.settings import DEFAULT_FROM_EMAIL
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404
+from .models import User
+from .serializers import (UserSerializer, SignUpSerializer, GetTokenSerializer)
 
 
 @api_view(['POST'])
@@ -26,11 +25,10 @@ def signup_view(request):
     serializer.is_valid(raise_exception=True)
     email = serializer.validated_data.get('email')
     username = serializer.validated_data.get('username')
-    new_user = User.objects.create_user(
+    new_user, created = User.objects.get_or_create(
         username=username,
         email=email,
     )
-    new_user.save()
     confirmation_code = default_token_generator.make_token(new_user)
     send_mail(
         subject='Код подтверждения',
@@ -50,7 +48,6 @@ def confirmation_view(request):
     serializer = GetTokenSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     code = request.data.get('confirmation_code')
-    # confirmation_code = serializer.validated_data.get('confirmation_code')
     username = serializer.validated_data.get('username')
     user = get_object_or_404(User, username=username)
     if not default_token_generator.check_token(user, code):
@@ -63,14 +60,14 @@ def confirmation_view(request):
 
 class UserViewSet(viewsets.ModelViewSet):
     """Вьюсет для работы с пользователями."""
+    http_method_names = ['get', 'post', 'patch', 'delete']
     serializer_class = UserSerializer
     pagination_class = LimitOffsetPagination
     queryset = User.objects.all()
     lookup_field = 'username'
-    permission_classes = [IsAdmin]
+    permission_classes = [IsAdmin, ]
     search_fields = ('username',)
-    filter_backends = (filters.SearchFilter, )
-    filterset_fields = ('username')
+    filter_backends = (filters.SearchFilter,)
 
     @action(detail=False, permission_classes=[IsAuthenticated],
             methods=['GET', 'PATCH'], url_path='me')
@@ -87,7 +84,7 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer = UserSerializer(
                 user,
                 data=request.data,
-                partial=True,               
+                partial=True,
             )
             serializer.is_valid(raise_exception=True)
             serializer.save(role=user.role)
