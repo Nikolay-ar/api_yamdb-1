@@ -2,7 +2,7 @@ import re
 
 from rest_framework import serializers
 
-from .models import User, ROLES
+from .models import User
 
 
 class RegistrationSerializer(serializers.Serializer):
@@ -41,8 +41,6 @@ class AuthentificationSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    # role = serializers.ChoiceField(choices=ROLES)
-
     class Meta:
         model = User
         fields = ['username',
@@ -51,13 +49,6 @@ class UserSerializer(serializers.ModelSerializer):
                   'last_name',
                   'bio',
                   'role']
-
-    # def validate_role(self, value):
-    #     if value not in ('user', 'moderator', 'admin'):
-    #         raise serializers.ValidationError(
-    #             'Роль должна быть user, moderator или admin'
-    #         )
-    #     return value
 
 
 class AdminUserSerializer(serializers.ModelSerializer):

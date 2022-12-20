@@ -1,22 +1,20 @@
-import re
 from http import HTTPStatus
 
-from django.contrib.auth.tokens import default_token_generator
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.pagination import LimitOffsetPagination
-from django.core.mail import send_mail
-from django.shortcuts import get_object_or_404
+from rest_framework import filters
 from rest_framework import viewsets
 from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework import filters
 
-from .models import User
-from .serializers import (UserSerializer, SignUpSerializer, GetTokenSerializer)
 from api.permissions import IsAdmin
 from api_yamdb.settings import DEFAULT_FROM_EMAIL
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404
+from .models import User
+from .serializers import (UserSerializer, SignUpSerializer, GetTokenSerializer)
 
 
 @api_view(['POST'])
@@ -70,7 +68,6 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdmin, ]
     search_fields = ('username',)
     filter_backends = (filters.SearchFilter,)
-    # filterset_fields = ('username',)
 
     @action(detail=False, permission_classes=[IsAuthenticated],
             methods=['GET', 'PATCH'], url_path='me')

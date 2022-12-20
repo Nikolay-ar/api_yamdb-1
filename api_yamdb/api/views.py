@@ -3,14 +3,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, filters
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.pagination import (LimitOffsetPagination,
-                                       PageNumberPagination)
+from rest_framework.pagination import (LimitOffsetPagination)
 from rest_framework.permissions import IsAuthenticated
 from reviews.models import (Categories, Titles, Genres,
-                            Reviews, GenresTitles, Comments)
+                            Reviews)
 
 from .permissions import (IsAdminOrReadOnly,
-                          IsAuthorOrIsModeratorOrAdminOrReadOnly,)
+                          IsAuthorOrIsModeratorOrAdminOrReadOnly, )
 from .serializers import (CategoriesSerializer,
                           GenresSerializer,
                           TitlesSerializer,
@@ -73,7 +72,6 @@ class GenresViewSet(CreateListDestroyViewSet):
 class ReviewsViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = (IsAuthorOrIsModeratorOrAdminOrReadOnly,)
-    # pagination_class = PageNumberPagination
 
     def get_queryset(self):
         title_id = self.kwargs.get('title_id')
@@ -91,7 +89,6 @@ class ReviewsViewSet(viewsets.ModelViewSet):
 class CommentsViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = (IsAuthorOrIsModeratorOrAdminOrReadOnly,)
-    # pagination_class = PageNumberPagination
 
     def get_queryset(self):
         title = get_object_or_404(Titles, id=self.kwargs.get('title_id'))
