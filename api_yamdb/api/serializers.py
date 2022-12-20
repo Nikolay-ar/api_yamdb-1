@@ -2,8 +2,8 @@ from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
-from reviews.models import (Categories, Genres, Titles, Comments,
-                            Reviews, GenresTitles)
+from reviews.models import (Categories, Comments, Genres, GenresTitles,
+                            Reviews, Titles)
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
@@ -64,6 +64,10 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('id', 'text', 'author', 'score', 'pub_date')
         model = Reviews
+
+    # def validate(self, data):
+    #     title = self.context.get('view').kwargs['title_id']
+    #     author = self.context['request'].user
 
 
 class CommentSerializer(serializers.ModelSerializer):

@@ -1,7 +1,7 @@
 import csv
 
-from reviews.models import (Categories, Genres, Titles,
-                            GenresTitles, Reviews, Comments)
+from reviews.models import (Categories, Comments, Genres, GenresTitles,
+                            Reviews, Titles)
 from users.models import User
 
 
@@ -90,7 +90,7 @@ def import_review():
         try:
             for row in reader:
                 data = Reviews(id=row['id'],
-                               titles=Titles.objects.get(
+                               title=Titles.objects.get(
                                    id=row['title_id']),
                                text=row['text'],
                                author=User.objects.get(
