@@ -2,6 +2,7 @@ import re
 from http import HTTPStatus
 
 from django.contrib.auth.tokens import default_token_generator
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.pagination import LimitOffsetPagination
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
@@ -26,7 +27,7 @@ def signup_view(request):
     serializer.is_valid(raise_exception=True)
     email = serializer.validated_data.get('email')
     username = serializer.validated_data.get('username')
-    new_user = User.objects.create_user(
+    new_user = User.objects.get_or_create(
         username=username,
         email=email,
     )
@@ -67,10 +68,10 @@ class UserViewSet(viewsets.ModelViewSet):
     pagination_class = LimitOffsetPagination
     queryset = User.objects.all()
     lookup_field = 'username'
-    permission_classes = [IsAdmin]
+    permission_classes = [IsAdmin, ]
     search_fields = ('username',)
-    filter_backends = (filters.SearchFilter, )
-    filterset_fields = ('username')
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend)
+    filterset_fields = ('username',)
 
     @action(detail=False, permission_classes=[IsAuthenticated],
             methods=['GET', 'PATCH'], url_path='me')
@@ -87,7 +88,7 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer = UserSerializer(
                 user,
                 data=request.data,
-                partial=True,               
+                partial=True,
             )
             serializer.is_valid(raise_exception=True)
             serializer.save(role=user.role)

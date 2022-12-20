@@ -30,18 +30,18 @@ class User(AbstractUser):
         verbose_name='Почта'
     )
 
-    first_name = models.CharField(
-        max_length=150,
-        verbose_name='Имя',
-        help_text='Введите имя'
-    )
-
-    second_name = models.CharField(
-        max_length=150,
-        null=True,
-        verbose_name='Фамилия',
-        help_text='Введите фамилию, если ее нет оставьте пустую строку'
-    )
+    # first_name = models.CharField(
+    #     max_length=150,
+    #     verbose_name='Имя',
+    #     help_text='Введите имя'
+    # )
+    #
+    # second_name = models.CharField(
+    #     max_length=150,
+    #     null=True,
+    #     verbose_name='Фамилия',
+    #     help_text='Введите фамилию, если ее нет оставьте пустую строку'
+    # )
 
     bio = models.TextField(
         null=True,
