@@ -23,8 +23,14 @@ def signup_view(request):
     """Функция для получения кода авторизации на почту."""
     serializer = SignUpSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    email = serializer.validated_data.get('email')
-    username = serializer.validated_data.get('username')
+    email = serializer.validated_data['email']
+    username = serializer.validated_data['username']
+    if not User.objects.filter(username=username,
+                               email=email).exists():
+        if User.objects.filter(username=username).exists():
+            return Response(serializer.data, status=HTTPStatus.BAD_REQUEST)
+        if User.objects.filter(email=email).exists():
+            return Response(serializer.data, status=HTTPStatus.BAD_REQUEST)
     new_user, created = User.objects.get_or_create(
         username=username,
         email=email,
@@ -38,7 +44,7 @@ def signup_view(request):
         recipient_list=[email],
         fail_silently=False
     )
-    return Response(serializer.data, status=HTTPStatus.OK.value)
+    return Response(serializer.data, status=HTTPStatus.OK)
 
 
 @api_view(['POST'])
@@ -52,10 +58,10 @@ def confirmation_view(request):
     user = get_object_or_404(User, username=username)
     if not default_token_generator.check_token(user, code):
         response = {'Неверный код'}
-        return Response(response, status=HTTPStatus.BAD_REQUEST.value)
+        return Response(response, status=HTTPStatus.BAD_REQUEST)
     token = str(RefreshToken.for_user(user).access_token)
     response = {'token': token}
-    return Response(response, status=HTTPStatus.OK.value)
+    return Response(response, status=HTTPStatus.OK)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -78,7 +84,7 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer = UserSerializer(user)
             return Response(
                 serializer.data,
-                status=HTTPStatus.OK.value
+                status=HTTPStatus.OK
             )
         if request.method == 'PATCH':
             serializer = UserSerializer(
@@ -90,5 +96,5 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer.save(role=user.role)
             return Response(
                 serializer.data,
-                status=HTTPStatus.OK.value
+                status=HTTPStatus.OK
             )

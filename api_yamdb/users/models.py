@@ -15,13 +15,11 @@ ROLES = (
 class User(AbstractUser):
     """Создание кастомного класса User, описание базовых функций"""
 
-    username_validator = UsernameValidator()
-
     username = models.CharField(
         max_length=150,
         unique=True,
         db_index=True,
-        validators=[username_validator],
+        validators=[UsernameValidator()],
         verbose_name='Никнейм'
     )
 
