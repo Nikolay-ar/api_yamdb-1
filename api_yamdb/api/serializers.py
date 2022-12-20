@@ -65,12 +65,6 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = ('id', 'text', 'author', 'score', 'pub_date')
         model = Reviews
 
-    def validate(self, data):
-        print(self.context)
-        print(self.context.get('view').kwargs['title_id'])
-        print(data)
-        return data
-
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
