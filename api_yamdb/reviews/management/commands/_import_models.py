@@ -1,7 +1,7 @@
 import csv
 
-from reviews.models import (Categories, Genres, Titles,
-                            GenresTitles, Reviews, Comments)
+from reviews.models import (Categories, Comments, Genres, GenresTitles,
+                            Reviews, Titles)
 from users.models import User
 
 

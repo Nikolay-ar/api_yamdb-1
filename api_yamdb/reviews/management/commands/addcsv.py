@@ -1,6 +1,6 @@
-from ._import_models import *
-
 from django.core.management.base import BaseCommand, CommandError
+
+from ._import_models import *
 
 
 class Command(BaseCommand):

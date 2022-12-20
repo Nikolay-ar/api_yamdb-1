@@ -1,20 +1,16 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import mixins, filters
-from rest_framework import viewsets
+from rest_framework import filters, mixins, viewsets
 from rest_framework.decorators import action
-from rest_framework.pagination import (LimitOffsetPagination)
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
-from reviews.models import (Categories, Titles, Genres,
-                            Reviews)
 
-from .permissions import (IsAdminOrReadOnly,
-                          IsAuthorOrIsModeratorOrAdminOrReadOnly, )
-from .serializers import (CategoriesSerializer,
-                          GenresSerializer,
-                          TitlesSerializer,
-                          CommentSerializer,
-                          ReviewSerializer, PostTitlesSerializer)
+from api.permissions import (IsAdminOrReadOnly,
+                             IsAuthorOrIsModeratorOrAdminOrReadOnly)
+from api.serializers import (CategoriesSerializer, CommentSerializer,
+                             GenresSerializer, PostTitlesSerializer,
+                             ReviewSerializer, TitlesSerializer)
+from reviews.models import Categories, Genres, Reviews, Titles
 
 
 class CreateListDestroyViewSet(mixins.CreateModelMixin,
