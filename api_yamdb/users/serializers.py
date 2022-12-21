@@ -7,12 +7,12 @@ from .validators import UsernameValidator
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username',
+        fields = ('username',
                   'email',
                   'first_name',
                   'last_name',
                   'bio',
-                  'role']
+                  'role')
 
 
 class SignUpSerializer(serializers.Serializer):
@@ -33,10 +33,9 @@ class SignUpSerializer(serializers.Serializer):
 
 class GetTokenSerializer(serializers.ModelSerializer):
     """Сериализатор для получения токена."""
-    username = serializers.CharField(
-        required=True)
+    username = serializers.CharField(max_length=255)
     confirmation_code = serializers.CharField(
-        required=True)
+        max_length=255, write_only=True)
 
     class Meta:
         model = User

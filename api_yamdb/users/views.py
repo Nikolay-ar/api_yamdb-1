@@ -4,9 +4,9 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, viewsets
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.decorators import action, api_view
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import  IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -18,7 +18,6 @@ from users.serializers import (GetTokenSerializer, SignUpSerializer,
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
 def signup_view(request):
     """Функция для получения кода авторизации на почту."""
     serializer = SignUpSerializer(data=request.data)
@@ -48,14 +47,14 @@ def signup_view(request):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
 def confirmation_view(request):
     """Функция для получения токена."""
     serializer = GetTokenSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    code = request.data.get('confirmation_code')
-    username = serializer.validated_data.get('username')
-    user = get_object_or_404(User, username=username)
+    if serializer.is_valid():
+        code = request.data.get('confirmation_code')
+        username = serializer.validated_data.get('username')
+        user = get_object_or_404(User, username=username)
     if not default_token_generator.check_token(user, code):
         response = {'Неверный код'}
         return Response(response, status=HTTPStatus.BAD_REQUEST)
@@ -83,15 +82,12 @@ class UserViewSet(viewsets.ModelViewSet):
         if request.method == 'GET':
             serializer = UserSerializer(user)
             return Response(serializer.data,
-                            status=HTTPStatus.OK
-                            )
+                            status=HTTPStatus.OK)
         if request.method == 'PATCH':
             serializer = UserSerializer(user,
                                         data=request.data,
-                                        partial=True,
-                                        )
+                                        partial=True,)
             serializer.is_valid(raise_exception=True)
             serializer.save(role=user.role)
             return Response(serializer.data,
-                            status=HTTPStatus.OK
-                            )
+                            status=HTTPStatus.OK)
