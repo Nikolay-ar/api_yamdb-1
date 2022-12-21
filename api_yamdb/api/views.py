@@ -4,7 +4,6 @@ from rest_framework import filters, mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
-
 from api.permissions import (IsAdminOrReadOnly,
                              IsAuthorOrIsModeratorOrAdminOrReadOnly)
 from api.serializers import (CategoriesSerializer, CommentSerializer,
