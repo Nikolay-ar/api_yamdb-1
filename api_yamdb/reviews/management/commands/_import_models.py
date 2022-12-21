@@ -1,7 +1,7 @@
 import csv
 
 from reviews.models import (Categories, Comments, Genres, GenresTitles,
-                            Reviews, Titles)
+                            Review, Title)
 from users.models import User
 
 
@@ -38,12 +38,12 @@ def import_titles():
         reader = csv.DictReader(csvfile)
         try:
             for row in reader:
-                data = Titles(id=row['id'],
-                              name=row['name'],
-                              year=row['year'],
-                              category=Categories.objects.get(
+                data = Title(id=row['id'],
+                             name=row['name'],
+                             year=row['year'],
+                             category=Categories.objects.get(
                                   id=row['category'])
-                              )
+                             )
                 data.save()
         except Exception as error:
             raise ImportError(
@@ -56,7 +56,7 @@ def import_genres_title():
         try:
             for row in reader:
                 data = GenresTitles(id=row['id'],
-                                    title=Titles.objects.get(
+                                    title=Title.objects.get(
                                         id=row['title_id']),
                                     genre=Genres.objects.get(
                                         id=row['genre_id']))
@@ -89,14 +89,14 @@ def import_review():
         reader = csv.DictReader(csvfile)
         try:
             for row in reader:
-                data = Reviews(id=row['id'],
-                               title=Titles.objects.get(
+                data = Review(id=row['id'],
+                              title=Title.objects.get(
                                    id=row['title_id']),
-                               text=row['text'],
-                               author=User.objects.get(
+                              text=row['text'],
+                              author=User.objects.get(
                                    id=row['author']),
-                               score=row['score'],
-                               pub_date=row['pub_date'])
+                              score=row['score'],
+                              pub_date=row['pub_date'])
                 data.save()
         except Exception as error:
             raise ImportError(
@@ -109,7 +109,7 @@ def import_comments():
         try:
             for row in reader:
                 data = Comments(id=row['id'],
-                                review=Reviews.objects.get(
+                                review=Review.objects.get(
                                     id=row['review_id']),
                                 text=row['text'],
                                 author=User.objects.get(

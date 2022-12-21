@@ -10,7 +10,7 @@ from api.permissions import (IsAdminOrReadOnly,
 from api.serializers import (CategoriesSerializer, CommentSerializer,
                              GenresSerializer, PostTitlesSerializer,
                              ReviewSerializer, TitlesSerializer)
-from reviews.models import Categories, Genres, Reviews, Titles
+from reviews.models import Categories, Genres, Review, Title
 
 
 class CreateListDestroyViewSet(mixins.CreateModelMixin,
@@ -41,7 +41,7 @@ class TitlesViewSet(viewsets.ModelViewSet):
         return TitlesSerializer
 
     def get_queryset(self):
-        queryset = Titles.objects.all()
+        queryset = Title.objects.all()
         category_slug = self.request.query_params.get('category')
         genre_slug = self.request.query_params.get('genre')
         if category_slug is not None:
@@ -71,14 +71,14 @@ class ReviewsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         title_id = self.kwargs.get('title_id')
-        new_queryset = Reviews.objects.filter(title=title_id)
+        new_queryset = Review.objects.filter(title=title_id)
         return new_queryset
 
     @action(detail=False, permission_classes=[IsAuthenticated],
             methods=['POST'])
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')
-        title = get_object_or_404(Titles, id=title_id)
+        title = get_object_or_404(Title, id=title_id)
         serializer.save(author=self.request.user, title=title)
 
 
@@ -87,7 +87,7 @@ class CommentsViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthorOrIsModeratorOrAdminOrReadOnly,)
 
     def get_queryset(self):
-        title = get_object_or_404(Titles, id=self.kwargs.get('title_id'))
+        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
         try:
             review = title.reviews.get(id=self.kwargs.get('review_id'))
         except TypeError:
@@ -96,7 +96,7 @@ class CommentsViewSet(viewsets.ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
-        title = get_object_or_404(Titles, id=self.kwargs.get('title_id'))
+        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
         try:
             review = title.reviews.get(id=self.kwargs.get('review_id'))
         except TypeError:

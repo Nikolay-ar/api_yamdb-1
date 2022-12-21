@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
@@ -28,7 +29,7 @@ class Genres(models.Model):
         verbose_name_plural = 'Жанры'
 
 
-class Titles(models.Model):
+class Title(models.Model):
     name = models.TextField(max_length=256)
     year = models.IntegerField('Год выпуска')
     description = models.TextField()
@@ -49,7 +50,7 @@ class Titles(models.Model):
 
 
 class GenresTitles(models.Model):
-    title = models.ForeignKey(Titles, on_delete=models.CASCADE)
+    title = models.ForeignKey(Title, on_delete=models.CASCADE)
     genre = models.ForeignKey(Genres, on_delete=models.CASCADE)
 
     class Meta:
@@ -60,11 +61,11 @@ class GenresTitles(models.Model):
         return f'{self.title} {self.genre}'
 
 
-class Reviews(models.Model):
+class Review(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='reviews')
     title = models.ForeignKey(
-        Titles, on_delete=models.CASCADE, related_name='reviews')
+        Title, on_delete=models.CASCADE, related_name='reviews')
     text = models.TextField()
     score = models.SmallIntegerField(default=1,
                                      validators=[
@@ -84,7 +85,7 @@ class Comments(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='comments')
     review = models.ForeignKey(
-        Reviews, on_delete=models.CASCADE, related_name='comments')
+        Review, on_delete=models.CASCADE, related_name='comments')
     text = models.TextField()
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
