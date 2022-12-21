@@ -1,19 +1,19 @@
 from django.db.models import Avg
 from rest_framework import serializers
 
-from reviews.models import (Categories, Comments, Genres, GenresTitles,
-                            Review, Title)
+from reviews.models import (Category, Comment, Genre, GenresTitles, Review,
+                            Title)
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Categories
+        model = Category
         fields = ('name', 'slug')
 
 
 class GenresSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Genres
+        model = Genre
         fields = ('name', 'slug')
 
 
@@ -39,12 +39,12 @@ class TitlesSerializer(serializers.ModelSerializer):
 
 class PostTitlesSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
-        queryset=Categories.objects.all(),
+        queryset=Category.objects.all(),
         slug_field='slug'
     )
     genre = serializers.SlugRelatedField(
         many=True,
-        queryset=Genres.objects.all(),
+        queryset=Genre.objects.all(),
         slug_field='slug'
     )
 
@@ -59,7 +59,6 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only=True, slug_field='username'
     )
 
-
     class Meta:
         fields = ('id', 'text', 'author', 'score', 'pub_date')
         model = Review
@@ -67,7 +66,9 @@ class ReviewSerializer(serializers.ModelSerializer):
     def validate(self, data):
         title = self.context.get('view').kwargs['title_id']
         author = self.context['request'].user
-        if Review.objects.filter(author=author, title=title).exists():
+
+        if (Review.objects.filter(author=author, title=title).exists() and
+                self.context['request'].method == 'POST'):
             raise serializers.ValidationError(
                 'Нельзя добавлять больше одного отзыва')
         return data
@@ -80,4 +81,4 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = ('id', 'text', 'author', 'pub_date')
-        model = Comments
+        model = Comment

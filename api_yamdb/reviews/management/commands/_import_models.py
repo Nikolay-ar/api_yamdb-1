@@ -1,7 +1,7 @@
 import csv
 
-from reviews.models import (Categories, Comments, Genres, GenresTitles,
-                            Review, Title)
+from reviews.models import (Category, Comment, Genre, GenresTitles, Review,
+                            Title)
 from users.models import User
 
 
@@ -10,9 +10,9 @@ def import_categories():
         reader = csv.DictReader(csvfile)
         try:
             for row in reader:
-                data = Categories(id=row['id'],
-                                  name=row['name'],
-                                  slug=row['slug'])
+                data = Category(id=row['id'],
+                                name=row['name'],
+                                slug=row['slug'])
                 data.save()
         except Exception as error:
             raise ImportError(
@@ -24,9 +24,9 @@ def import_genres():
         reader = csv.DictReader(csvfile)
         try:
             for row in reader:
-                data = Genres(id=row['id'],
-                              name=row['name'],
-                              slug=row['slug'])
+                data = Genre(id=row['id'],
+                             name=row['name'],
+                             slug=row['slug'])
                 data.save()
         except Exception as error:
             raise ImportError(
@@ -41,8 +41,8 @@ def import_titles():
                 data = Title(id=row['id'],
                              name=row['name'],
                              year=row['year'],
-                             category=Categories.objects.get(
-                                  id=row['category'])
+                             category=Category.objects.get(
+                                 id=row['category'])
                              )
                 data.save()
         except Exception as error:
@@ -58,7 +58,7 @@ def import_genres_title():
                 data = GenresTitles(id=row['id'],
                                     title=Title.objects.get(
                                         id=row['title_id']),
-                                    genre=Genres.objects.get(
+                                    genre=Genre.objects.get(
                                         id=row['genre_id']))
                 data.save()
         except Exception as error:
@@ -91,10 +91,10 @@ def import_review():
             for row in reader:
                 data = Review(id=row['id'],
                               title=Title.objects.get(
-                                   id=row['title_id']),
+                                  id=row['title_id']),
                               text=row['text'],
                               author=User.objects.get(
-                                   id=row['author']),
+                                  id=row['author']),
                               score=row['score'],
                               pub_date=row['pub_date'])
                 data.save()
@@ -108,14 +108,14 @@ def import_comments():
         reader = csv.DictReader(csvfile)
         try:
             for row in reader:
-                data = Comments(id=row['id'],
-                                review=Review.objects.get(
-                                    id=row['review_id']),
-                                text=row['text'],
-                                author=User.objects.get(
-                                    id=row['author']),
-                                pub_date=row['pub_date']
-                                )
+                data = Comment(id=row['id'],
+                               review=Review.objects.get(
+                                   id=row['review_id']),
+                               text=row['text'],
+                               author=User.objects.get(
+                                   id=row['author']),
+                               pub_date=row['pub_date']
+                               )
                 data.save()
         except Exception as error:
             raise ImportError(

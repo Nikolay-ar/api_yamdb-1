@@ -1,11 +1,11 @@
-from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import UniqueConstraint
 
 from users.models import User
 
 
-class Categories(models.Model):
+class Category(models.Model):
     name = models.TextField(max_length=256)
     slug = models.SlugField(max_length=50, unique=True)
 
@@ -17,7 +17,7 @@ class Categories(models.Model):
         verbose_name_plural = 'Категории (Типы)'
 
 
-class Genres(models.Model):
+class Genre(models.Model):
     name = models.TextField(max_length=256)
     slug = models.SlugField(max_length=50, unique=True)
 
@@ -34,11 +34,11 @@ class Title(models.Model):
     year = models.IntegerField('Год выпуска')
     description = models.TextField()
     category = models.ForeignKey(
-        Categories, on_delete=models.SET_NULL,
+        Category, on_delete=models.SET_NULL,
         related_name='title',
         null=True
     )
-    genre = models.ManyToManyField(Genres, through='GenresTitles')
+    genre = models.ManyToManyField(Genre, through='GenresTitles')
 
     def __str__(self):
         return self.name[:15]
@@ -51,7 +51,7 @@ class Title(models.Model):
 
 class GenresTitles(models.Model):
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
-    genre = models.ForeignKey(Genres, on_delete=models.CASCADE)
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'Произведение:Жанры'
@@ -79,9 +79,14 @@ class Review(models.Model):
         verbose_name = 'Отзыв на произведение'
         verbose_name_plural = 'Отзывы на произведение'
         ordering = ['pub_date', 'title']
+        constraints = [
+            UniqueConstraint(
+                fields=['author', 'title'],
+                name='double_review'
+            )]
 
 
-class Comments(models.Model):
+class Comment(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='comments')
     review = models.ForeignKey(
