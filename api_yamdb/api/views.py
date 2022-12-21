@@ -4,6 +4,8 @@ from rest_framework import filters, mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
+
+from api.filters import TitleFilter
 from api.permissions import (IsAdminOrReadOnly,
                              IsAuthorOrIsModeratorOrAdminOrReadOnly)
 from api.serializers import (CategoriesSerializer, CommentSerializer,
@@ -32,7 +34,7 @@ class CategoriesViewSet(CreateListDestroyViewSet):
 class TitlesViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-    filterset_fields = ('name', 'year')
+    filterset_class = TitleFilter
 
     def get_serializer_class(self):
         if self.request.method in ['POST', 'PATCH']:

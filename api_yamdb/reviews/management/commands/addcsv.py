@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
+
 from reviews.management.commands._import_models import (import_categories,
                                                         import_comments,
                                                         import_genres,

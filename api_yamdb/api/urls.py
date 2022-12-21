@@ -1,5 +1,6 @@
 from django.urls import include, path
 from rest_framework import routers
+
 from api.views import (CategoriesViewSet, CommentsViewSet, GenresViewSet,
                        ReviewsViewSet, TitlesViewSet)
 from users.views import UserViewSet
