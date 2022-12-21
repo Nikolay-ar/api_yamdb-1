@@ -32,6 +32,7 @@ class CategoriesViewSet(CreateListDestroyViewSet):
 
 
 class TitlesViewSet(viewsets.ModelViewSet):
+    queryset = Title.objects.all()
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filterset_class = TitleFilter
@@ -40,18 +41,6 @@ class TitlesViewSet(viewsets.ModelViewSet):
         if self.request.method in ['POST', 'PATCH']:
             return PostTitlesSerializer
         return TitlesSerializer
-
-    def get_queryset(self):
-        queryset = Title.objects.all()
-        if self.request.query_params.get('category') is not None:
-            queryset = queryset.filter(category=Category.objects.get(
-                slug=self.request.query_params.get('category'))
-            )
-        if self.request.query_params.get('genre') is not None:
-            queryset = queryset.filter(genre=Genre.objects.get(
-                slug=self.request.query_params.get('genre'))
-            )
-        return queryset
 
 
 class GenresViewSet(CreateListDestroyViewSet):
