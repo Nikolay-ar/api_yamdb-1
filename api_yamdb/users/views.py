@@ -9,6 +9,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+
 from api.permissions import IsAdmin
 from api_yamdb.settings import DEFAULT_FROM_EMAIL
 from users.models import User
@@ -81,19 +82,16 @@ class UserViewSet(viewsets.ModelViewSet):
         user = request.user
         if request.method == 'GET':
             serializer = UserSerializer(user)
-            return Response(
-                serializer.data,
-                status=HTTPStatus.OK
-            )
+            return Response(serializer.data,
+                            status=HTTPStatus.OK
+                            )
         if request.method == 'PATCH':
-            serializer = UserSerializer(
-                user,
-                data=request.data,
-                partial=True,
-            )
+            serializer = UserSerializer(user,
+                                        data=request.data,
+                                        partial=True,
+                                        )
             serializer.is_valid(raise_exception=True)
             serializer.save(role=user.role)
-            return Response(
-                serializer.data,
-                status=HTTPStatus.OK
-            )
+            return Response(serializer.data,
+                            status=HTTPStatus.OK
+                            )

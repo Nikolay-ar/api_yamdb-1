@@ -41,15 +41,16 @@ class TitlesViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Title.objects.all()
-        category_slug = self.request.query_params.get('category')
         genre_slug = self.request.query_params.get('genre')
-        if category_slug is not None:
+        if self.request.query_params.get('category') is not None:
             queryset = queryset.filter(
-                category=Category.objects.get(slug=category_slug)
+                category=Category.objects.get(
+                    slug=self.request.query_params.get('category'))
             )
-        if genre_slug is not None:
+        if self.request.query_params.get('genre') is not None:
             queryset = queryset.filter(
-                genre=Genre.objects.get(slug=genre_slug)
+                genre=Genre.objects.get(
+                    slug=self.request.query_params.get('genre'))
             )
         return queryset
 
