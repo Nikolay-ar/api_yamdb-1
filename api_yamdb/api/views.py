@@ -4,6 +4,7 @@ from rest_framework import filters, mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
+
 from api.permissions import (IsAdminOrReadOnly,
                              IsAuthorOrIsModeratorOrAdminOrReadOnly)
 from api.serializers import (CategoriesSerializer, CommentSerializer,
@@ -41,16 +42,13 @@ class TitlesViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Title.objects.all()
-        genre_slug = self.request.query_params.get('genre')
         if self.request.query_params.get('category') is not None:
-            queryset = queryset.filter(
-                category=Category.objects.get(
-                    slug=self.request.query_params.get('category'))
+            queryset = queryset.filter(category=Category.objects.get(
+                slug=self.request.query_params.get('category'))
             )
         if self.request.query_params.get('genre') is not None:
-            queryset = queryset.filter(
-                genre=Genre.objects.get(
-                    slug=self.request.query_params.get('genre'))
+            queryset = queryset.filter(genre=Genre.objects.get(
+                slug=self.request.query_params.get('genre'))
             )
         return queryset
 

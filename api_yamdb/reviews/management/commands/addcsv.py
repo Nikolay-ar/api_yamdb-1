@@ -1,12 +1,11 @@
 from django.core.management.base import BaseCommand, CommandError
-
 from reviews.management.commands._import_models import (import_categories,
                                                         import_comments,
                                                         import_genres,
                                                         import_genres_title,
                                                         import_review,
                                                         import_titles,
-                                                        import_users,
+                                                        import_users
                                                         )
 
 
