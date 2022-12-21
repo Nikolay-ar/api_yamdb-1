@@ -10,7 +10,7 @@ from api.permissions import (IsAdminOrReadOnly,
 from api.serializers import (CategoriesSerializer, CommentSerializer,
                              GenresSerializer, PostTitlesSerializer,
                              ReviewSerializer, TitlesSerializer)
-from reviews.models import Categories, Genres, Review, Title
+from reviews.models import Category, Genre, Review, Title
 
 
 class CreateListDestroyViewSet(mixins.CreateModelMixin,
@@ -21,7 +21,7 @@ class CreateListDestroyViewSet(mixins.CreateModelMixin,
 
 
 class CategoriesViewSet(CreateListDestroyViewSet):
-    queryset = Categories.objects.all()
+    queryset = Category.objects.all()
     serializer_class = CategoriesSerializer
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = LimitOffsetPagination
@@ -46,17 +46,17 @@ class TitlesViewSet(viewsets.ModelViewSet):
         genre_slug = self.request.query_params.get('genre')
         if category_slug is not None:
             queryset = queryset.filter(
-                category=Categories.objects.get(slug=category_slug)
+                category=Category.objects.get(slug=category_slug)
             )
         if genre_slug is not None:
             queryset = queryset.filter(
-                genre=Genres.objects.get(slug=genre_slug)
+                genre=Genre.objects.get(slug=genre_slug)
             )
         return queryset
 
 
 class GenresViewSet(CreateListDestroyViewSet):
-    queryset = Genres.objects.all()
+    queryset = Genre.objects.all()
     serializer_class = GenresSerializer
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = LimitOffsetPagination
@@ -74,7 +74,8 @@ class ReviewsViewSet(viewsets.ModelViewSet):
         new_queryset = Review.objects.filter(title=title_id)
         return new_queryset
 
-    @action(detail=False, permission_classes=[IsAuthenticated],
+    @action(detail=False,
+            permission_classes=[IsAuthenticated],
             methods=['POST'])
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')
