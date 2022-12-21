@@ -1,6 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-
-from ._import_models import *
+from reviews.management.commands._import_models import *
 
 
 class Command(BaseCommand):

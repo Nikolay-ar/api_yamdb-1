@@ -1,6 +1,5 @@
 from django.db.models import Avg
 from rest_framework import serializers
-
 from reviews.models import (Category, Comment, Genre, GenresTitles, Review,
                             Title)
 
@@ -67,8 +66,11 @@ class ReviewSerializer(serializers.ModelSerializer):
         title = self.context.get('view').kwargs['title_id']
         author = self.context['request'].user
 
-        if (Review.objects.filter(author=author, title=title).exists() and
-                self.context['request'].method == 'POST'):
+        if (
+                Review.objects.filter(
+                    author=author, title=title
+                ).exists() and self.context['request'].method == 'POST'
+        ):
             raise serializers.ValidationError(
                 'Нельзя добавлять больше одного отзыва')
         return data

@@ -9,7 +9,6 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-
 from api.permissions import IsAdmin
 from api_yamdb.settings import DEFAULT_FROM_EMAIL
 from users.models import User
