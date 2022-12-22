@@ -6,9 +6,9 @@ ADMIN = 'admin'
 MODERATOR = 'moderator'
 USER = 'user'
 ROLES = (
-    (ADMIN, 'Administrator'),
-    (MODERATOR, 'Moderator'),
-    (USER, 'User'),
+    (ADMIN, 'Администратор'),
+    (MODERATOR, 'Модератор'),
+    (USER, 'Пользователь'),
 )
 
 
@@ -52,11 +52,7 @@ class User(AbstractUser):
 
     @property
     def is_admin(self):
-        return self.role == ADMIN or self.is_superuser
-
-    @property
-    def is_user(self):
-        return self.role == USER
+        return self.role == ADMIN or self.is_staff
 
     def __str__(self):
         return self.username
