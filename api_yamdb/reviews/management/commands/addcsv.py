@@ -6,8 +6,7 @@ from reviews.management.commands._import_models import (import_categories,
                                                         import_genres_title,
                                                         import_review,
                                                         import_titles,
-                                                        import_users
-                                                        )
+                                                        import_users)
 
 
 class Command(BaseCommand):
