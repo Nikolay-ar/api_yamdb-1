@@ -1,43 +1,53 @@
+import datetime as dt
+
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import UniqueConstraint
+
 from users.models import User
 
 
-class Category(models.Model):
-    name = models.TextField(max_length=256)
-    slug = models.SlugField(max_length=50, unique=True)
+class NameSlugModel(models.Model):
+    name = models.TextField(max_length=256, verbose_name='Имя')
+    slug = models.SlugField(max_length=50, unique=True, verbose_name='Слаг')
+
+    class Meta:
+        # Это абстрактная модель:
+        abstract = True
+        ordering = ('name',)
 
     def __str__(self):
         return self.slug
 
-    class Meta:
+
+class Category(NameSlugModel):
+    class Meta(NameSlugModel.Meta):
         verbose_name = 'Катагория (Тип)'
         verbose_name_plural = 'Категории (Типы)'
 
 
-class Genre(models.Model):
-    name = models.TextField(max_length=256)
-    slug = models.SlugField(max_length=50, unique=True)
-
-    def __str__(self):
-        return self.slug
-
-    class Meta:
+class Genre(NameSlugModel):
+    class Meta(NameSlugModel.Meta):
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
 
 
 class Title(models.Model):
-    name = models.TextField(max_length=256)
-    year = models.IntegerField('Год выпуска')
-    description = models.TextField()
+    name = models.TextField(max_length=256,
+                            verbose_name='Название произведения')
+    year = models.SmallIntegerField(
+        'Год выпуска', blank=True, null=True, db_index=True,
+        validators=[MaxValueValidator(dt.datetime.now().year)],
+    )
+    description = models.TextField('Описание')
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL,
         related_name='title',
-        null=True
+        null=True,
+        verbose_name='Категория',
     )
-    genre = models.ManyToManyField(Genre, through='GenresTitles')
+    genre = models.ManyToManyField(Genre, through='GenresTitles',
+                                   verbose_name='Жанр',)
 
     def __str__(self):
         return self.name[:15]
