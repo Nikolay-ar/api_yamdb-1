@@ -19,7 +19,7 @@ class GenresSerializer(serializers.ModelSerializer):
 
 
 class TitlesSerializer(serializers.ModelSerializer):
-    rating = serializers.IntegerField()
+    rating = serializers.IntegerField(default=0)
     category = CategoriesSerializer()
     genre = GenresSerializer(many=True)
 
@@ -32,6 +32,7 @@ class TitlesSerializer(serializers.ModelSerializer):
 
 
 class PostTitlesSerializer(serializers.ModelSerializer):
+
     category = serializers.SlugRelatedField(
         queryset=Category.objects.all(),
         slug_field='slug'
@@ -47,15 +48,15 @@ class PostTitlesSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'year',
                   'description', 'genre', 'category')
 
-    # def to_representation(self, value):
-    #     representation = TitlesSerializer.to_representation(self, value)
-    #     return representation
-
     def validate_year(self, data):
         if data > dt.datetime.now().year:
             raise serializers.ValidationError(
                 'Нельзя добавлять произведения, которые еще не вышли ')
         return data
+
+    def to_representation(self, instance):
+        representation = TitlesSerializer(instance).data
+        return representation
 
 
 class ReviewSerializer(serializers.ModelSerializer):

@@ -39,8 +39,11 @@ class GenresViewSet(CreateListDestroyViewSet):
 class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.annotate(rating=Avg('reviews__score'))
     permission_classes = (IsAdminOrReadOnly,)
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filter_backends = (DjangoFilterBackend,
+                       filters.SearchFilter,
+                       filters.OrderingFilter)
     filterset_class = TitleFilter
+    ordering_fields = ['name']
 
     def get_serializer_class(self):
         if self.request.method in ['POST', 'PATCH']:
