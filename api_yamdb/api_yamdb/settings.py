@@ -117,3 +117,7 @@ EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 DEFAULT_FROM_EMAIL = 'Комманда поддержки yambd <noreply@yambd.ru>'
 
 AUTH_USER_MODEL = 'users.User'
+
+FIELD_TEXT_LENGTH = 256
+
+FIELD_SLUG_LENGTH = 50

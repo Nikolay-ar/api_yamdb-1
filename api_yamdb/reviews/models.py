@@ -1,5 +1,5 @@
 import datetime as dt
-
+from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import UniqueConstraint
@@ -8,11 +8,13 @@ from users.models import User
 
 
 class NameSlugModel(models.Model):
-    name = models.TextField(max_length=256, verbose_name='Имя')
-    slug = models.SlugField(max_length=50, unique=True, verbose_name='Слаг')
+    name = models.TextField(max_length=settings.FIELD_TEXT_LENGTH,
+                            verbose_name='Имя')
+    slug = models.SlugField(max_length=settings.FIELD_SLUG_LENGTH,
+                            unique=True,
+                            verbose_name='Слаг')
 
     class Meta:
-        # Это абстрактная модель:
         abstract = True
         ordering = ('name',)
 
