@@ -1,4 +1,5 @@
 from django.db.models import Avg
+import datetime as dt
 from rest_framework import serializers
 
 from reviews.models import (Category, Comment, Genre, GenresTitles, Review,
@@ -17,24 +18,17 @@ class GenresSerializer(serializers.ModelSerializer):
         fields = ('name', 'slug')
 
 
-class GenresTitlesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = GenresTitles
-        fields = ('title', 'genre')
-
-
 class TitlesSerializer(serializers.ModelSerializer):
-    rating = serializers.SerializerMethodField()
-    category = CategoriesSerializer(read_only=True)
-    genre = GenresSerializer(many=True, read_only=True)
+    rating = serializers.IntegerField()
+    category = CategoriesSerializer()
+    genre = GenresSerializer(many=True)
 
     class Meta:
         model = Title
         fields = ('id', 'name', 'year', 'rating',
                   'description', 'genre', 'category')
-
-    def get_rating(self, obj):
-        return obj.reviews.all().aggregate(Avg('score'))['score__avg']
+        read_only_fields = ('id', 'name', 'year', 'rating',
+                            'description', 'genre', 'category')
 
 
 class PostTitlesSerializer(serializers.ModelSerializer):
@@ -52,6 +46,16 @@ class PostTitlesSerializer(serializers.ModelSerializer):
         model = Title
         fields = ('id', 'name', 'year',
                   'description', 'genre', 'category')
+
+    # def to_representation(self, value):
+    #     representation = TitlesSerializer.to_representation(self, value)
+    #     return representation
+
+    def validate_year(self, data):
+        if data > dt.datetime.now().year:
+            raise serializers.ValidationError(
+                'Нельзя добавлять произведения, которые еще не вышли ')
+        return data
 
 
 class ReviewSerializer(serializers.ModelSerializer):
