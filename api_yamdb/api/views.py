@@ -1,3 +1,4 @@
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, viewsets
@@ -18,12 +19,6 @@ class CreateListDestroyViewSet(mixins.CreateModelMixin,
                                mixins.ListModelMixin,
                                mixins.DestroyModelMixin,
                                viewsets.GenericViewSet):
-    pass
-
-
-class CategoriesViewSet(CreateListDestroyViewSet):
-    queryset = Category.objects.all()
-    serializer_class = CategoriesSerializer
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = LimitOffsetPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
@@ -31,8 +26,18 @@ class CategoriesViewSet(CreateListDestroyViewSet):
     search_fields = ('name',)
 
 
+class CategoriesViewSet(CreateListDestroyViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategoriesSerializer
+
+
+class GenresViewSet(CreateListDestroyViewSet):
+    queryset = Genre.objects.all()
+    serializer_class = GenresSerializer
+
+
 class TitlesViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
+    queryset = Title.objects.annotate(rating=Avg('reviews__score'))
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filterset_class = TitleFilter
@@ -42,15 +47,8 @@ class TitlesViewSet(viewsets.ModelViewSet):
             return PostTitlesSerializer
         return TitlesSerializer
 
-
-class GenresViewSet(CreateListDestroyViewSet):
-    queryset = Genre.objects.all()
-    serializer_class = GenresSerializer
-    permission_classes = (IsAdminOrReadOnly,)
-    pagination_class = LimitOffsetPagination
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-    lookup_field = 'slug'
-    search_fields = ('name',)
+    def get_rating(self, obj):
+        return obj.reviews.all().aggregate(Avg('score'))['score__avg']
 
 
 class ReviewsViewSet(viewsets.ModelViewSet):
