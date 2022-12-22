@@ -58,12 +58,9 @@ class ReviewsViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthorOrIsModeratorOrAdminOrReadOnly,)
 
     def get_queryset(self):
-        title_id = self.kwargs.get('title_id')
-        return Review.objects.filter(title=title_id)
+        title = get_object_or_404(Title, pk = self.kwargs.get('title_id'))
+        return title.reviews.all()
 
-    @action(detail=False,
-            permission_classes=[IsAuthenticated],
-            methods=['POST'])
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')
         title = get_object_or_404(Title, id=title_id)
@@ -75,17 +72,9 @@ class CommentsViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthorOrIsModeratorOrAdminOrReadOnly,)
 
     def get_queryset(self):
-        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
-        try:
-            review = title.reviews.get(id=self.kwargs.get('review_id'))
-        except TypeError:
-            TypeError('У произведения нет такого отзыва')
+        review = get_object_or_404(Review, pk = self.kwargs.get('review_id'))
         return review.comments.all()
 
     def perform_create(self, serializer):
-        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
-        try:
-            review = title.reviews.get(id=self.kwargs.get('review_id'))
-        except TypeError:
-            TypeError('У произведения нет такого отзыва')
+        review = get_object_or_404(Review, pk = self.kwargs.get('review_id'))
         serializer.save(author=self.request.user, review=review)

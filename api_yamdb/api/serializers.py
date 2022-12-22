@@ -60,8 +60,9 @@ class ReviewSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        fields = ('id', 'text', 'author', 'score', 'pub_date')
+        fields = ('id', 'text', 'author', 'score', 'pub_date', 'title')
         model = Review
+        read_only_fields = ('title',)
 
     def validate(self, data):
         title = self.context.get('view').kwargs['title_id']
@@ -83,5 +84,6 @@ class CommentSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        fields = ('id', 'text', 'author', 'pub_date')
+        fields = ('id', 'text', 'author', 'pub_date', 'review')
         model = Comment
+        read_only_fields = ('review',)
