@@ -66,11 +66,11 @@ class Review(models.Model):
     title = models.ForeignKey(
         Title, on_delete=models.CASCADE, related_name='reviews')
     text = models.TextField()
-    score = models.SmallIntegerField(default=1,
-                                     validators=[
-                                         MaxValueValidator(10),
-                                         MinValueValidator(1)
-                                     ])
+    score = models.IntegerField(
+        default=1,
+        validators=[
+            MaxValueValidator(10, "Значение не больше %(limit_value)."),
+            MinValueValidator(1, "Значение не меньше %(limit_value).")])
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
 
