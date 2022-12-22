@@ -60,21 +60,34 @@ class GenresTitles(models.Model):
         return f'{self.title} {self.genre}'
 
 
-class Review(models.Model):
+class ReviewComment(models.Model):
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='reviews')
+        User, on_delete=models.CASCADE, related_name="%(app_label)s_%(class)s_related")
+    text = models.TextField()
+    pub_date = models.DateTimeField(
+        'Дата добавления', auto_now_add=True, db_index=True)
+
+    def __str__(self):
+        return self.author
+
+    class Meta:
+        abstract = True
+        verbose_name = 'Комментарий к отзыву'
+        verbose_name_plural = 'Комментарии к отзыву'
+        ordering = ['pub_date', 'review']
+
+
+class Review(ReviewComment):
     title = models.ForeignKey(
         Title, on_delete=models.CASCADE, related_name='reviews')
-    text = models.TextField()
     score = models.IntegerField(
         default=1,
         validators=[
             MaxValueValidator(10, "Значение не больше %(limit_value)."),
             MinValueValidator(1, "Значение не меньше %(limit_value).")])
-    pub_date = models.DateTimeField(
-        'Дата добавления', auto_now_add=True, db_index=True)
 
-    class Meta:
+
+    class Meta(ReviewComment.Meta):
         verbose_name = 'Отзыв на произведение'
         verbose_name_plural = 'Отзывы на произведение'
         ordering = ['pub_date', 'title']
@@ -85,19 +98,6 @@ class Review(models.Model):
             )]
 
 
-class Comment(models.Model):
-    author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='comments')
+class Comment(ReviewComment):
     review = models.ForeignKey(
         Review, on_delete=models.CASCADE, related_name='comments')
-    text = models.TextField()
-    pub_date = models.DateTimeField(
-        'Дата добавления', auto_now_add=True, db_index=True)
-
-    def __str__(self):
-        return self.author
-
-    class Meta:
-        verbose_name = 'Комментарий к отзыву'
-        verbose_name_plural = 'Комментарии к отзыву'
-        ordering = ['pub_date', 'review']
