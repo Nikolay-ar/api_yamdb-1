@@ -65,14 +65,11 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only_fields = ('title',)
 
     def validate(self, data):
+        if self.context['request'].method != 'POST':
+            return data
         title = self.context.get('view').kwargs['title_id']
         author = self.context['request'].user
-
-        if (
-                Review.objects.filter(
-                    author=author, title=title
-                ).exists() and self.context['request'].method == 'POST'
-        ):
+        if Review.objects.filter(author=author, title=title).exists():
             raise serializers.ValidationError(
                 'Нельзя добавлять больше одного отзыва')
         return data
