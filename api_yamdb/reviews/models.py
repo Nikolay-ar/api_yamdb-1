@@ -1,4 +1,5 @@
 import datetime as dt
+
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -49,7 +50,7 @@ class Title(models.Model):
         verbose_name='Категория',
     )
     genre = models.ManyToManyField(Genre, through='GenresTitles',
-                                   verbose_name='Жанр',)
+                                   verbose_name='Жанр', )
 
     def __str__(self):
         return self.name[:15]
@@ -74,7 +75,8 @@ class GenresTitles(models.Model):
 
 class ReviewComment(models.Model):
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(app_label)s_%(class)s_related")
+        User, on_delete=models.CASCADE,
+        related_name="%(app_label)s_%(class)s_related")
     text = models.TextField()
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
@@ -97,7 +99,6 @@ class Review(ReviewComment):
         validators=[
             MaxValueValidator(10, "Значение не больше %(limit_value)."),
             MinValueValidator(1, "Значение не меньше %(limit_value).")])
-
 
     class Meta(ReviewComment.Meta):
         verbose_name = 'Отзыв на произведение'
