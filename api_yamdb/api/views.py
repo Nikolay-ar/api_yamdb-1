@@ -1,27 +1,16 @@
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, mixins, viewsets
-from rest_framework.pagination import LimitOffsetPagination
+from rest_framework import filters, viewsets
 
 from api.filters import TitleFilter
+from api.mixins import CreateListDestroyViewSet
 from api.permissions import (IsAdminOrReadOnly,
                              IsAuthorOrIsModeratorOrAdminOrReadOnly)
 from api.serializers import (CategoriesSerializer, CommentSerializer,
                              GenresSerializer, PostTitlesSerializer,
                              ReviewSerializer, TitlesSerializer)
 from reviews.models import Category, Genre, Review, Title
-
-
-class CreateListDestroyViewSet(mixins.CreateModelMixin,
-                               mixins.ListModelMixin,
-                               mixins.DestroyModelMixin,
-                               viewsets.GenericViewSet):
-    permission_classes = (IsAdminOrReadOnly,)
-    pagination_class = LimitOffsetPagination
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-    lookup_field = 'slug'
-    search_fields = ('name',)
 
 
 class CategoriesViewSet(CreateListDestroyViewSet):
@@ -47,9 +36,6 @@ class TitlesViewSet(viewsets.ModelViewSet):
         if self.request.method in ['POST', 'PATCH']:
             return PostTitlesSerializer
         return TitlesSerializer
-
-    def get_rating(self, obj):
-        return obj.reviews.all().aggregate(Avg('score'))['score__avg']
 
 
 class ReviewsViewSet(viewsets.ModelViewSet):

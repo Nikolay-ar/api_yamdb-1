@@ -1,4 +1,5 @@
 import datetime as dt
+
 from rest_framework import serializers
 
 from reviews.models import (Category, Comment, Genre, Review,
@@ -53,8 +54,7 @@ class PostTitlesSerializer(serializers.ModelSerializer):
         return data
 
     def to_representation(self, instance):
-        representation = TitlesSerializer(instance).data
-        return representation
+        return TitlesSerializer(instance).data
 
 
 class ReviewSerializer(serializers.ModelSerializer):
