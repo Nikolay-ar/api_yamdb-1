@@ -1,4 +1,3 @@
-from django.db.models import Avg
 import datetime as dt
 from rest_framework import serializers
 
@@ -32,7 +31,6 @@ class TitlesSerializer(serializers.ModelSerializer):
 
 
 class PostTitlesSerializer(serializers.ModelSerializer):
-
     category = serializers.SlugRelatedField(
         queryset=Category.objects.all(),
         slug_field='slug'

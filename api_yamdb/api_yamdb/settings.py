@@ -122,6 +122,10 @@ FIELD_TEXT_LENGTH = 256
 
 FIELD_SLUG_LENGTH = 50
 
+EMAIL_ERROR ='Электронная почта уже занята.'
+
+USERNAME_ERROR = 'Имя уже занято, придумайте другое'
+
 FIELD_MAX_LENGTH = 150
 
 FIELD_ROLE_LENGTH = 10
