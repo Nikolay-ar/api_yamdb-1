@@ -1,11 +1,10 @@
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, mixins, viewsets
-from rest_framework.decorators import action
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import filters, viewsets
 
 from api.filters import TitleFilter
+from api.mixins import CreateListDestroyViewSet
 from api.permissions import (IsAdminOrReadOnly,
                              IsAuthorOrIsModeratorOrAdminOrReadOnly)
 from api.serializers import (CategoriesSerializer, CommentSerializer,
@@ -14,43 +13,29 @@ from api.serializers import (CategoriesSerializer, CommentSerializer,
 from reviews.models import Category, Genre, Review, Title
 
 
-class CreateListDestroyViewSet(mixins.CreateModelMixin,
-                               mixins.ListModelMixin,
-                               mixins.DestroyModelMixin,
-                               viewsets.GenericViewSet):
-    pass
-
-
 class CategoriesViewSet(CreateListDestroyViewSet):
     queryset = Category.objects.all()
     serializer_class = CategoriesSerializer
-    permission_classes = (IsAdminOrReadOnly,)
-    pagination_class = LimitOffsetPagination
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-    lookup_field = 'slug'
-    search_fields = ('name',)
-
-
-class TitlesViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
-    permission_classes = (IsAdminOrReadOnly,)
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-    filterset_class = TitleFilter
-
-    def get_serializer_class(self):
-        if self.request.method in ['POST', 'PATCH']:
-            return PostTitlesSerializer
-        return TitlesSerializer
 
 
 class GenresViewSet(CreateListDestroyViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenresSerializer
+
+
+class TitlesViewSet(viewsets.ModelViewSet):
+    queryset = Title.objects.annotate(rating=Avg('reviews__score'))
     permission_classes = (IsAdminOrReadOnly,)
-    pagination_class = LimitOffsetPagination
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-    lookup_field = 'slug'
-    search_fields = ('name',)
+    filter_backends = (DjangoFilterBackend,
+                       filters.SearchFilter,
+                       filters.OrderingFilter)
+    filterset_class = TitleFilter
+    ordering_fields = ['name']
+
+    def get_serializer_class(self):
+        if self.request.method in ['POST', 'PATCH']:
+            return PostTitlesSerializer
+        return TitlesSerializer
 
 
 class ReviewsViewSet(viewsets.ModelViewSet):
@@ -67,6 +52,7 @@ class ReviewsViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user, title=self.title())
 
 
+
 class CommentsViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = (IsAuthorOrIsModeratorOrAdminOrReadOnly,)
@@ -79,3 +65,4 @@ class CommentsViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user, review=self.review())
+
