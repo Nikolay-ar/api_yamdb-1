@@ -1,12 +1,13 @@
 from http import HTTPStatus
-
+from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, viewsets
 from rest_framework.decorators import action, api_view
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import  IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -24,16 +25,16 @@ def signup_view(request):
     serializer.is_valid(raise_exception=True)
     email = serializer.validated_data['email']
     username = serializer.validated_data['username']
-    if not User.objects.filter(username=username,
-                               email=email).exists():
-        if User.objects.filter(username=username).exists():
-            return Response(serializer.data, status=HTTPStatus.BAD_REQUEST)
-        if User.objects.filter(email=email).exists():
-            return Response(serializer.data, status=HTTPStatus.BAD_REQUEST)
-    new_user, created = User.objects.get_or_create(
-        username=username,
-        email=email,
-    )
+    try:
+        new_user, created = User.objects.get_or_create(
+            username=username,
+            email=email,
+        )
+    except IntegrityError:
+        error = settings.USERNAME_ERROR if User.objects.filter(
+            username=username).exists() else settings.EMAIL_ERROR
+        return Response(error, status=HTTPStatus.BAD_REQUEST)
+
     confirmation_code = default_token_generator.make_token(new_user)
     send_mail(
         subject='Код подтверждения',
@@ -86,7 +87,7 @@ class UserViewSet(viewsets.ModelViewSet):
         if request.method == 'PATCH':
             serializer = UserSerializer(user,
                                         data=request.data,
-                                        partial=True,)
+                                        partial=True, )
             serializer.is_valid(raise_exception=True)
             serializer.save(role=user.role)
             return Response(serializer.data,

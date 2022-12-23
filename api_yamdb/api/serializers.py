@@ -1,4 +1,3 @@
-from django.db.models import Avg
 import datetime as dt
 from rest_framework import serializers
 
@@ -32,7 +31,6 @@ class TitlesSerializer(serializers.ModelSerializer):
 
 
 class PostTitlesSerializer(serializers.ModelSerializer):
-
     category = serializers.SlugRelatedField(
         queryset=Category.objects.all(),
         slug_field='slug'
@@ -70,16 +68,13 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only_fields = ('title',)
 
     def validate(self, data):
-        title = self.context.get('view').kwargs['title_id']
-        author = self.context['request'].user
-
-        if (
-                Review.objects.filter(
-                    author=author, title=title
-                ).exists() and self.context['request'].method == 'POST'
-        ):
-            raise serializers.ValidationError(
-                'Нельзя добавлять больше одного отзыва')
+        if self.context['request'].method == 'POST':
+            title = self.context.get('view').kwargs['title_id']
+            author = self.context['request'].user
+            if Review.objects.filter(author=author,
+                                     title=title).exists():
+                raise serializers.ValidationError(
+                    'Нельзя добавлять больше одного отзыва')
         return data
 
 
