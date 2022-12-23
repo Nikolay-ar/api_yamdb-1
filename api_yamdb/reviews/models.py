@@ -74,9 +74,7 @@ class GenresTitles(models.Model):
 
 
 class ReviewComment(models.Model):
-    author = models.ForeignKey(
-        User, on_delete=models.CASCADE,
-        related_name="%(app_label)s_%(class)s_related")
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField()
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
@@ -92,8 +90,7 @@ class ReviewComment(models.Model):
 
 
 class Review(ReviewComment):
-    title = models.ForeignKey(
-        Title, on_delete=models.CASCADE, related_name='reviews')
+    title = models.ForeignKey(Title, on_delete=models.CASCADE)
     score = models.IntegerField(
         default=1,
         validators=[
@@ -104,13 +101,13 @@ class Review(ReviewComment):
         verbose_name = 'Отзыв на произведение'
         verbose_name_plural = 'Отзывы на произведение'
         ordering = ['pub_date', 'title']
-        constraints = [
-            UniqueConstraint(
-                fields=['author', 'title'],
-                name='double_review'
-            )]
+        constraints = [UniqueConstraint(fields=['author', 'title'],
+                                        name='double_review')]
+        default_related_name = 'reviews'
 
 
 class Comment(ReviewComment):
-    review = models.ForeignKey(
-        Review, on_delete=models.CASCADE, related_name='comments')
+    review = models.ForeignKey(Review, on_delete=models.CASCADE)
+
+    class Meta(ReviewComment.Meta):
+        default_related_name = 'comments'
