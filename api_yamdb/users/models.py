@@ -1,14 +1,15 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from users.validators import UsernameValidator
+from django.conf import settings
+from users.validators import username_validator
 
 ADMIN = 'admin'
 MODERATOR = 'moderator'
 USER = 'user'
 ROLES = (
-    (ADMIN, 'Administrator'),
-    (MODERATOR, 'Moderator'),
-    (USER, 'User'),
+    (ADMIN, 'Администратор'),
+    (MODERATOR, 'Модератор'),
+    (USER, 'Пользователь'),
 )
 
 
@@ -16,15 +17,15 @@ class User(AbstractUser):
     """Создание кастомного класса User, описание базовых функций"""
 
     username = models.CharField(
-        max_length=150,
+        max_length=settings.FIELD_MAX_LENGTH,
         unique=True,
         db_index=True,
-        validators=[UsernameValidator()],
+        validators=[username_validator],
         verbose_name='Никнейм'
     )
 
     email = models.EmailField(
-        max_length=254,
+        max_length=settings.FIELD_EMAIL_LENGTH,
         unique=True,
         verbose_name='Почта'
     )
@@ -37,7 +38,7 @@ class User(AbstractUser):
     )
 
     role = models.CharField(
-        max_length=10,
+        max_length=settings.FIELD_ROLE_LENGTH,
         choices=ROLES,
         default=USER,
         verbose_name='Роль пользователя'
@@ -52,11 +53,7 @@ class User(AbstractUser):
 
     @property
     def is_admin(self):
-        return self.role == ADMIN or self.is_superuser
-
-    @property
-    def is_user(self):
-        return self.role == USER
+        return self.role == ADMIN or self.is_staff
 
     def __str__(self):
         return self.username
