@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
 from .models import User
-from .validators import UsernameValidator
-
+from users.validators import username_validator
+from django.conf import settings
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,9 +16,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class SignUpSerializer(serializers.Serializer):
-    email = serializers.EmailField(max_length=254)
-    username = serializers.CharField(max_length=150,
-                                     validators=[UsernameValidator()], )
+    email = serializers.EmailField(max_length=settings.FIELD_EMAIL_LENGTH)
+    username = serializers.CharField(max_length=settings.FIELD_MAX_LENGTH,
+                                     validators=[username_validator])
 
     class Meta:
         model = User
@@ -31,11 +31,14 @@ class SignUpSerializer(serializers.Serializer):
         return value
 
 
-class GetTokenSerializer(serializers.ModelSerializer):
+class GetTokenSerializer(serializers.Serializer):
     """Сериализатор для получения токена."""
-    username = serializers.CharField(max_length=255)
+    username = serializers.CharField(
+        max_length=settings.FIELD_TOKEN_LENGTH,
+        validators=[username_validator]
+    )
     confirmation_code = serializers.CharField(
-        max_length=255, write_only=True)
+        max_length=settings.FIELD_TOKEN_LENGTH, write_only=True)
 
     class Meta:
         model = User
