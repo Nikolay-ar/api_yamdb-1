@@ -36,7 +36,7 @@ class Genre(NameSlugModel):
 
 
 class Title(models.Model):
-    name = models.TextField(max_length=256,
+    name = models.TextField(max_length=settings.FIELD_TEXT_LENGTH,
                             verbose_name='Название произведения')
     year = models.SmallIntegerField(
         'Год выпуска', blank=True, null=True, db_index=True,
@@ -58,7 +58,7 @@ class Title(models.Model):
     class Meta:
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
-        ordering = ['-id']
+        ordering = ('-id',)
 
 
 class GenresTitles(models.Model):
