@@ -38,7 +38,7 @@ class Genre(NameSlugModel):
 class Title(models.Model):
     name = models.TextField(max_length=settings.FIELD_TEXT_LENGTH,
                             verbose_name='Название произведения')
-    year = models.SmallIntegerField(
+    year = models.PositiveSmallIntegerField(
         'Год выпуска', blank=True, null=True, db_index=True,
         validators=[MaxValueValidator(dt.datetime.now().year)],
     )
