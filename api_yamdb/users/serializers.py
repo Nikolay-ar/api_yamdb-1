@@ -14,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
                   'last_name',
                   'bio',
                   'role')
-                  
+
     def validate_username(self, value):
         return username_validator(value)
 
