@@ -14,9 +14,13 @@ class UserSerializer(serializers.ModelSerializer):
                   'last_name',
                   'bio',
                   'role')
-                  
-    def validate_username(self, value):
-        return username_validator(value)
+        validators = [
+            serializers.UniqueTogetherValidator(
+                queryset=model.objects.all(),
+                fields=('username', 'email'),
+                message=('Пользователь с таким email уже существует')
+            )
+        ]
 
 
 class SignUpSerializer(serializers.Serializer):
