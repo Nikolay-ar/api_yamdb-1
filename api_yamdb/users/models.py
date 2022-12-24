@@ -1,6 +1,7 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.conf import settings
+
 from users.validators import username_validator
 
 ADMIN = 'admin'
@@ -38,7 +39,7 @@ class User(AbstractUser):
     )
 
     role = models.CharField(
-        max_length=settings.FIELD_ROLE_LENGTH,
+        max_length=max([len(role) for role, name in ROLES]),
         choices=ROLES,
         default=USER,
         verbose_name='Роль пользователя'

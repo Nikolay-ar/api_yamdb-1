@@ -1,10 +1,9 @@
-import datetime as dt
-
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import UniqueConstraint
 
+from reviews.validators import validate_year
 from users.models import User
 
 
@@ -36,11 +35,11 @@ class Genre(NameSlugModel):
 
 
 class Title(models.Model):
-    name = models.TextField(max_length=256,
+    name = models.TextField(max_length=settings.FIELD_TEXT_LENGTH,
                             verbose_name='Название произведения')
-    year = models.SmallIntegerField(
+    year = models.PositiveSmallIntegerField(
         'Год выпуска', blank=True, null=True, db_index=True,
-        validators=[MaxValueValidator(dt.datetime.now().year)],
+        validators=[validate_year],
     )
     description = models.TextField('Описание')
     category = models.ForeignKey(
@@ -58,7 +57,7 @@ class Title(models.Model):
     class Meta:
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
-        ordering = ['-id']
+        ordering = ('-id',)
 
 
 class GenresTitles(models.Model):
@@ -74,9 +73,7 @@ class GenresTitles(models.Model):
 
 
 class ReviewComment(models.Model):
-    author = models.ForeignKey(
-        User, on_delete=models.CASCADE,
-        related_name="%(app_label)s_%(class)s_related")
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField()
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
@@ -92,8 +89,7 @@ class ReviewComment(models.Model):
 
 
 class Review(ReviewComment):
-    title = models.ForeignKey(
-        Title, on_delete=models.CASCADE, related_name='reviews')
+    title = models.ForeignKey(Title, on_delete=models.CASCADE)
     score = models.IntegerField(
         default=1,
         validators=[
@@ -104,13 +100,13 @@ class Review(ReviewComment):
         verbose_name = 'Отзыв на произведение'
         verbose_name_plural = 'Отзывы на произведение'
         ordering = ['pub_date', 'title']
-        constraints = [
-            UniqueConstraint(
-                fields=['author', 'title'],
-                name='double_review'
-            )]
+        constraints = [UniqueConstraint(fields=['author', 'title'],
+                                        name='double_review')]
+        default_related_name = 'reviews'
 
 
 class Comment(ReviewComment):
-    review = models.ForeignKey(
-        Review, on_delete=models.CASCADE, related_name='comments')
+    review = models.ForeignKey(Review, on_delete=models.CASCADE)
+
+    class Meta(ReviewComment.Meta):
+        default_related_name = 'comments'

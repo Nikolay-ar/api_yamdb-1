@@ -1,3 +1,5 @@
+from itertools import chain
+
 from django.contrib import admin
 
 from .models import Category, Comment, Genre, GenresTitles, Review, Title
@@ -8,8 +10,11 @@ class GenresTitlesAdmin(admin.TabularInline):
 
 
 class TitleAdmin(admin.ModelAdmin):
+    def genre_list(self, obj):
+        return list(chain.from_iterable(obj.genre.values_list('name')))
+
     list_display = (
-        'pk', 'name', 'year', 'description', 'category')
+        'pk', 'name', 'year', 'genre_list', 'description', 'category')
     list_editable = ('category',)
     search_fields = ('year', 'name',)
     list_filter = ('name',)

@@ -1,8 +1,8 @@
 from django.conf import settings
 from rest_framework import serializers
 
-from users.validators import username_validator
 from users.models import User
+from users.validators import username_validator
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -14,6 +14,9 @@ class UserSerializer(serializers.ModelSerializer):
                   'last_name',
                   'bio',
                   'role')
+                  
+    def validate_username(self, value):
+        return username_validator(value)
 
 
 class SignUpSerializer(serializers.Serializer):
@@ -24,12 +27,6 @@ class SignUpSerializer(serializers.Serializer):
     class Meta:
         model = User
         fields = ('email', 'username')
-
-    def validate_username(self, value):
-        if value == 'me':
-            raise serializers.ValidationError(
-                'Вы не можете зарегистрироваться под именем me')
-        return value
 
 
 class GetTokenSerializer(serializers.Serializer):
