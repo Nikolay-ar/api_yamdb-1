@@ -1,9 +1,8 @@
-import datetime as dt
-
 from rest_framework import serializers
 
 from reviews.models import (Category, Comment, Genre, Review,
                             Title)
+from reviews.validators import validate_year
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
@@ -41,17 +40,12 @@ class PostTitlesSerializer(serializers.ModelSerializer):
         queryset=Genre.objects.all(),
         slug_field='slug'
     )
+    year = serializers.IntegerField(validators=[validate_year])
 
     class Meta:
         model = Title
         fields = ('id', 'name', 'year',
                   'description', 'genre', 'category')
-
-    def validate_year(self, data):
-        if data > dt.datetime.now().year:
-            raise serializers.ValidationError(
-                'Нельзя добавлять произведения, которые еще не вышли ')
-        return data
 
     def to_representation(self, instance):
         return TitlesSerializer(instance).data

@@ -13,7 +13,7 @@ def symbol_name(symbol):
 def username_validator(value):
     if value == 'me':
         raise ValidationError(
-            'Для имени пользователя нельзя использовать "me"'
+            'Для имени пользователя нельзя использовать «me»'
         )
     incorrect = list(set(''.join(re.findall(PATTERN, value))))
     if incorrect:
