@@ -17,7 +17,6 @@ from users.models import User
 from users.serializers import (GetTokenSerializer, SignUpSerializer,
                                UserSerializer)
 
-
 @api_view(['POST'])
 def signup_view(request):
     """Функция для получения кода авторизации на почту."""
@@ -52,10 +51,9 @@ def confirmation_view(request):
     """Функция для получения токена."""
     serializer = GetTokenSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    if serializer.is_valid():
-        code = request.data.get('confirmation_code')
-        username = serializer.validated_data.get('username')
-        user = get_object_or_404(User, username=username)
+    code = serializer.validated_data.get('confirmation_code')
+    username = serializer.validated_data.get('username')
+    user = get_object_or_404(User, username=username)
     if not default_token_generator.check_token(user, code):
         response = {'Неверный код'}
         return Response(response, status=HTTPStatus.BAD_REQUEST)
