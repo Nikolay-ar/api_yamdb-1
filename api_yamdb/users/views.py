@@ -17,6 +17,7 @@ from users.models import User
 from users.serializers import (GetTokenSerializer, SignUpSerializer,
                                UserSerializer)
 
+
 @api_view(['POST'])
 def signup_view(request):
     """Функция для получения кода авторизации на почту."""
