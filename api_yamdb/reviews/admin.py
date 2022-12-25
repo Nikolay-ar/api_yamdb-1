@@ -19,6 +19,7 @@ class TitleAdmin(admin.ModelAdmin):
     search_fields = ('year', 'name',)
     list_filter = ('name',)
     inlines = [GenresTitlesAdmin, ]
+    genre_list.short_description = 'Список жанров произведения'
 
 
 class CategoryAdmin(admin.ModelAdmin):
