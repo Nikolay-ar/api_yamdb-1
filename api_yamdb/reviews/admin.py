@@ -1,5 +1,3 @@
-from itertools import chain
-
 from django.contrib import admin
 
 from .models import Category, Comment, Genre, GenresTitles, Review, Title
@@ -15,7 +13,7 @@ class TitleAdmin(admin.ModelAdmin):
 
     list_display = (
         'pk', 'name', 'year', 'genre_list', 'description', 'category')
-    list_editable = ('category', )
+    list_editable = ('category',)
     search_fields = ('year', 'name',)
     list_filter = ('name',)
     inlines = [GenresTitlesAdmin, ]
