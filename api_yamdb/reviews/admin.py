@@ -11,15 +11,15 @@ class GenresTitlesAdmin(admin.TabularInline):
 
 class TitleAdmin(admin.ModelAdmin):
     def genre_list(self, obj):
-        return list(chain.from_iterable(obj.genre.values_list('name')))
+        return list(genre for genre in obj.genre.all())
 
     list_display = (
         'pk', 'name', 'year', 'genre_list', 'description', 'category')
-    list_editable = ('category',)
+    list_editable = ('category', )
     search_fields = ('year', 'name',)
     list_filter = ('name',)
     inlines = [GenresTitlesAdmin, ]
-    genre_list.short_description = 'Список жанров произведения'
+    genre_list.short_description = 'Жанр'
 
 
 class CategoryAdmin(admin.ModelAdmin):
